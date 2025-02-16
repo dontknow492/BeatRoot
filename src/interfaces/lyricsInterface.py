@@ -258,7 +258,7 @@ if(__name__ == "__main__"):
     app = QApplication(sys.argv)
     setTheme(Theme.DARK)
     w = LyricsInterface()
-    w.show()
+    w.showFullScreen()
     # w.setBackgroundImage(r"D:\Downloads\Images\Desktop-blurry-wallpaper.jpg")
     title = "Ajab Si"
     author = "Vishal-Skehar, KK"
@@ -308,7 +308,7 @@ Tere saath saath aisa
     # w.zoomContainer.show()
     # w.zoomContainer.raise_()
     # w.zoomContainer.raise_()
-    w.set_lyrics("Dil Lga Liya", "John Doe", lyrics)  
+    w.set_lyrics("Dil Lga Liya", "Sameer", lyrics)  
     # w.update_lyrics(title, author, lyrics)
     app.exec()
     

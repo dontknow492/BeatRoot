@@ -757,6 +757,7 @@ class SignalHandler(QObject):
 
 
 def main():
+    # setTheme(Theme.DARK)
     # Configure logging
     logger.add("logs/app.log", rotation="1 week", level="DEBUG", encoding="utf-8", backtrace=True, diagnose=True)
     logger.info("App started")
@@ -773,11 +774,11 @@ def main():
     # splash_screen.show()
     
     window = MainWindow()
+    # window.setWindowState(Qt.WindowState.WindowFullScreen)
     window.setContentsMargins(0, 0, 0, 98)
     window.move(100, 100)
-    # QTimer.singleShot(1800, lambda: splash_screen.finish())
-    window.showMaximized()
     # window.showMaximized()
+    window.showFullScreen()
 
     # Create an event to signal app closure
     app_close_event = asyncio.Event()
