@@ -56,12 +56,19 @@ Musify is a feature-rich cross-platform music player application with modern UI 
 
 ### Dependencies
 ```bash
-pip install PySide6 qfluentwidgets qasync loguru ytmusicapi
+pip install PySide6 qfluentwidgets ytmusicapi loguru mutagen python-vlc ytdlp qsaync
+
+### Repository Links
+- [QFluentWidgets](https://github.com/zhiyiYo/QFluentWidgets)
+- [qasync](https://github.com/CabbageDevelopment/qasync)
+- [loguru](https://github.com/Delgan/loguru)
+- [ytmusicapi](https://github.com/sigma67/ytmusicapi)
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 
 ### Getting Started
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/musify.git
+git clone https://github.com/dontknow492/BeatRoot.git
 cd musify
 ```
 
@@ -164,13 +171,25 @@ Contributions are welcome! Please follow:
 5. Open a pull request
 
 ## Screenshots 📸
-![Home Interface](screenshots/home.png)
+![Home Interface](screenshots\home.png)
 *Home view showing featured content*
 
 ![Player Interface](screenshots/player.png)
 *Compact bottom player controls*
 
-![Dark Theme](screenshots/dark-mode.png)
+![Search Interface](screenshots/search.png)
+*Search any music*
+
+![Playlist](screenshots/playlist.png)
+*View play playlist, artist, releated songs*
+
+![Lyrics Interface](screenshots/lyrics.png)
+*Elignent and real time lyrics*
+
+![Stats Interface](screenshots/stats.png)
+*Get your stats, usage reports, top song, artist, etc*
+
+![Dark Theme](screenshots/home_dark.png)
 *Dark theme appearance*
 
 ## Support ❤️
