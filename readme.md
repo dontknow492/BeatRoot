@@ -171,7 +171,7 @@ Contributions are welcome! Please follow:
 5. Open a pull request
 
 ## Screenshots 📸
-![Home Interface](screenshots\home.png)
+![Home Interface](screenshots/home.png)
 *Home view showing featured content*
 
 ![Player Interface](screenshots/player.png)
