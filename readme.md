@@ -1,6 +1,3 @@
-Here's a detailed README.md for your Musify application:
-
-```markdown
 # Musify - Modern Music Player Application
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
@@ -60,7 +57,6 @@ Musify is a feature-rich cross-platform music player application with modern UI 
 ### Dependencies
 ```bash
 pip install PySide6 qfluentwidgets qasync loguru ytmusicapi
-```
 
 ### Getting Started
 1. Clone the repository:
