@@ -57,6 +57,7 @@ Musify is a feature-rich cross-platform music player application with modern UI 
 ### Dependencies
 ```bash
 pip install PySide6 qfluentwidgets ytmusicapi loguru mutagen python-vlc ytdlp qsaync
+```
 
 ### Repository Links
 - [QFluentWidgets](https://github.com/zhiyiYo/QFluentWidgets)
@@ -171,26 +172,28 @@ Contributions are welcome! Please follow:
 5. Open a pull request
 
 ## Screenshots 📸
+
+#### Home view showing featured content
 ![Home Interface](screenshots/home.png)
-*Home view showing featured content*
 
+#### Compact bottom player controls 
 ![Player Interface](screenshots/player.png)
-*Compact bottom player controls*
 
+#### Search any music 
 ![Search Interface](screenshots/search.png)
-*Search any music*
 
+#### View play playlist, artist, releated songs 
 ![Playlist](screenshots/playlist.png)
-*View play playlist, artist, releated songs*
 
+#### Elignent and real time lyrics 
 ![Lyrics Interface](screenshots/lyrics.png)
-*Elignent and real time lyrics*
 
+#### Get your stats, usage reports, top song, artist, etc 
 ![Stats Interface](screenshots/stats.png)
-*Get your stats, usage reports, top song, artist, etc*
 
+#### Dark theme appearance 
 ![Dark Theme](screenshots/home_dark.png)
-*Dark theme appearance*
+
 
 ## Support ❤️
 If you find this project useful, please consider:
