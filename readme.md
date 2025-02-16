@@ -203,5 +203,4 @@ If you find this project useful, please consider:
 - 🖋️ Writing documentation
 
 ---
-**Note:** This application is under active development. Some features may be experimental.
-```
+**Note:** This application is under active development. Some features may be experimental, not work so please be patient, i am trying my full to complete so hope you like it.
