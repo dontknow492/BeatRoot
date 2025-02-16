@@ -1,0 +1,8 @@
+PySide6
+qfluentwidgets
+ytmusicapi
+loguru
+mutagen
+python-vlc
+ytdlp
+qsaync
