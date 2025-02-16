@@ -204,4 +204,3 @@ If you find this project useful, please consider:
 
 ---
 **Note:** This application is under active development. Some features may be experimental.
-```
