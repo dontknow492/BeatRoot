@@ -205,23 +205,3 @@ If you find this project useful, please consider:
 ---
 **Note:** This application is under active development. Some features may be experimental.
 ```
-
-This README includes:
-1. Comprehensive feature list
-2. Detailed installation instructions
-3. Project structure breakdown
-4. Configuration guidance
-5. Usage documentation
-6. Development guidelines
-7. Contribution framework
-8. License information
-9. Support section
-
-You may want to:
-1. Add actual screenshots
-2. Include build instructions for different platforms
-3. Add CI/CD badges
-4. Specify exact Python version requirements
-5. Include troubleshooting section
-6. Add API documentation link
-7. Include contact information
