@@ -794,11 +794,12 @@ def main():
             logger.info("Application shutdown requested.")
 
     
-    print("loop ends")
+    logger.debug("loop ends")
     # loop.close()
     print("this is real end")
     # Explicitly quit the QApplication
     # app.quit()
+    
 
 
 
