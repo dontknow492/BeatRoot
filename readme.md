@@ -191,7 +191,7 @@ Contributions are welcome! Please follow:
 ## Screenshots 📸
 
 #### Home view showing featured content
-<img src="screenshots/home.png" alt="Home Interface" style="border-radius: 10px; width: 500px;  /* Adjust width as needed */">
+<img src="screenshots/home.png" alt="Home Interface" style="border-radius: 10px; border: 2px solid #ccc; width: 500px;  /* Adjust width as needed */">
 
 #### Compact bottom player controls 
 <img src="screenshots/player.png" alt="Player Interface" style="border-radius: 4px; width: 500px;  /* Adjust width as needed */">
