@@ -1,10 +1,10 @@
-# Musify - Modern Music Player Application
+# BeatRoot- Modern Music Player Application
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![Qt](https://img.shields.io/badge/Qt-%23217346.svg?style=for-the-badge&logo=Qt&logoColor=white)
 ![Fluent Design](https://img.shields.io/badge/Fluent%20Design-0078D4?style=for-the-badge&logo=microsoft&logoColor=white)
-
-Musify is a feature-rich cross-platform music player application with modern UI design, combining local music library management with online streaming capabilities through YouTube Music integration.
+![Asyncio](https://img.shields.io/badge/Asyncio-red?style=for-the-badge&logo=microsoft&logoColor=white)\
+Musify is a feature-rich cross-platform music player application with modern UI design, combining local music library management with online streaming capabilities through YouTube Music integration, completely build using python.
 
 ## Features ✨
 
@@ -48,6 +48,19 @@ Musify is a feature-rich cross-platform music player application with modern UI 
 - Error handling and logging
 - Cross-platform compatibility
 
+### Your Stats
+- Play time
+- Song played
+- Playlist Played
+- Artist View
+- Full Album Browser
+- Fav/Liked Songs
+
+### Tracking
+- Top Songs
+- Top Artists
+- Top Albums
+
 ## Installation 🛠️
 
 ### Prerequisites
@@ -56,7 +69,7 @@ Musify is a feature-rich cross-platform music player application with modern UI 
 
 ### Dependencies
 ```bash
-pip install PySide6 qfluentwidgets ytmusicapi loguru mutagen python-vlc ytdlp qsaync
+pip install PySide6 qfluentwidgets ytmusicapi loguru mutagen python-vlc ytdlp qsaync, aiosqlite
 ```
 
 ### Repository Links
@@ -65,6 +78,7 @@ pip install PySide6 qfluentwidgets ytmusicapi loguru mutagen python-vlc ytdlp qs
 - [loguru](https://github.com/Delgan/loguru)
 - [ytmusicapi](https://github.com/sigma67/ytmusicapi)
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+- [python-vlc](https://github.com/videolan/vlc)
 
 ### Getting Started
 1. Clone the repository:
@@ -91,7 +105,8 @@ musify/
 │   └── user/         # User data and database
 ├── src/
 │   ├── api/          # YouTube Music API integration
-│   ├── common/       # Shared components
+│   ├── common/       # Shared common widget
+    ├── components/   # Components like cards, dialog, etc
 │   ├── interfaces/   # UI views and widgets
 │   └── utility/      # Helper functions and managers
 ├── main.py           # Main application entry
@@ -145,6 +160,8 @@ Create `config.json` with YouTube Music authentication:
 - Observer pattern for signals/slots
 - Asynchronous programming with Qasync
 - Worker thread for API operations
+- Worker thread for downloading Songs
+- QNetworkManager for async thumbnail downloading
 
 ### Extending Functionality
 1. Add new interfaces:
@@ -204,3 +221,5 @@ If you find this project useful, please consider:
 
 ---
 **Note:** This application is under active development. Some features may be experimental, not work so please be patient, i am trying my full to complete so hope you like it.
+
+**Important:** This application use *vlc pluging* and *vlc dlls* to play the song, stream it so huge thanks to vlc for this and i wanted it able to play without needing of vlc in system so i used vlc plugin, dll for it.
