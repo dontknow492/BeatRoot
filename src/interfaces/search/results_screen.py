@@ -40,10 +40,6 @@ class SearchResultScreen(VerticalFrame):
         self.thumbnail_downloader = ThumbnailDownloader(self)
         self.thumbnail_downloader.download_finished.connect(self.set_card_cover)
         self.has_songs = False
-        self.has_artists = False
-        self.has_albums = False
-        self.has_feature_playlists = False
-        self.has_community_playlists = False
         self.cover_queue = queue.Queue()
         
         self.initUi()
@@ -71,45 +67,34 @@ class SearchResultScreen(VerticalFrame):
                 logger.error(f"Card not found for: {object_name}")
 
     def initUi(self):
+        # Search Bar Setup
         self.searchBar = SearchLineEdit(self)
         self.searchBar.setPlaceholderText("Search")
-        self.searchBar.setClearButtonEnabled(True)
         self.searchBar.setFixedHeight(50)
-        self.searchBar.setClearButtonEnabled(True)
-        self.searchBar.setClearButtonEnabled(True)
-        
-        
+
+        # Media Containers Setup
         self.mediaContainer = VerticalScrollWidget(None, self)
-        self.mediaContainer.setObjectName("mediaContainer")
-        
-        # hidden by default show as there media was found in create_add_Media Function
         self.songsContainerTitle = TitleLabel("Songs", self.mediaContainer)
-        self.songsContainer = VerticalFrame(parent = self.mediaContainer)
-        self.songsContainer.setObjectName("songsContainer")
-        self.songsContainer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
-        self.songsContainerSpacer = QSpacerItem(0, 0, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-        
+        self.songsContainer = VerticalFrame(parent=self.mediaContainer)
         self.loadMoreButton = PrimaryPushButton("Load More", self.mediaContainer)
         self.loadMoreButton.setCursor(Qt.PointingHandCursor)
-        
-        
-        self.artistsContainer = SideScrollWidget("Artists", self.mediaContainer)
-        self.artistsContainer.setFixedHeight(300)
-        self.artistsContainerSpacer = QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-        self.albumsContainer = SideScrollWidget("Albums", self.mediaContainer)
-        self.albumsContainer.setFixedHeight(350)
-        self.albumsContainerSpacer = QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-        self.comunityPlaylistContainer = SideScrollWidget("Community Playlists", self.mediaContainer)
-        self.comunityPlaylistContainer.setFixedHeight(350)
-        self.comunityPlaylistContainerSpacer = QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-        self.featuredPlaylistContainer = SideScrollWidget("Featured Playlists", self.mediaContainer)
-        self.featuredPlaylistContainer.setFixedHeight(350)
-        self.featuredPlaylistContainerSpacer = QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-        
-        
+
         self.mediaContainer.addWidget(self.songsContainerTitle)
         self.mediaContainer.addWidget(self.songsContainer)
         self.mediaContainer.addWidget(self.loadMoreButton, alignment=Qt.AlignmentFlag.AlignCenter)
+        
+        self._create_side_scroll_widgets()
+
+        self.addWidget(self.searchBar)
+        self.addWidget(self.mediaContainer)
+    
+    def _create_side_scroll_widgets(self):
+        self.artistsContainer = SideScrollWidget("Artists", self.mediaContainer)
+        self.albumsContainer = SideScrollWidget("Albums", self.mediaContainer)
+        self.comunityPlaylistContainer = SideScrollWidget("Community Playlists", self.mediaContainer)
+        self.featuredPlaylistContainer = SideScrollWidget("Featured Playlists", self.mediaContainer)
+        
+        
         self.mediaContainer.addWidget(self.artistsContainer)
         self.mediaContainer.addWidget(self.featuredPlaylistContainer)
         self.mediaContainer.addWidget(self.albumsContainer)
@@ -130,36 +115,16 @@ class SearchResultScreen(VerticalFrame):
             self.create_add_MediaCard(content)
         self.toggle_containers()
         
-        self.songsContainer.addSpacerItem(self.songsContainerSpacer)
-        self.artistsContainer.addSpacerItem(self.artistsContainerSpacer)
-        self.albumsContainer.addSpacerItem(self.albumsContainerSpacer)
-        self.featuredPlaylistContainer.addSpacerItem(self.featuredPlaylistContainerSpacer)
-        self.comunityPlaylistContainer.addSpacerItem(self.comunityPlaylistContainerSpacer)
-        
     def toggle_containers(self):
-        self.query = self.searchBar.text()        
-        if not self.has_songs:
-            self.songsContainer.hide()
-            self.songsContainerTitle.hide()
-            self.loadMoreButton.hide()
-            logger.info(f"No songs found for query: {self.query}")
-            
-        if not self.has_artists:
-            self.artistsContainer.hide()
-            logger.info(f"No artists found for query: {self.query}")
-            
-        if not self.has_albums:
-            self.albumsContainer.hide()
-            logger.info(f"No albums found for query: {self.query}")
-            
-        if not self.has_feature_playlists:
-            self.featuredPlaylistContainer.hide()
-            logger.info(f"No featured playlists found for query: {self.query}")
-            
-        if not self.has_community_playlists:
-            self.comunityPlaylistContainer.hide()
-            logger.info(f"No community playlists found for query: {self.query}")
-    
+        contnaires = [self.artistsContainer
+                    , self.albumsContainer,
+                    self.featuredPlaylistContainer,
+                    self.comunityPlaylistContainer
+                    ]
+        for container in contnaires:
+            if not container.count():
+                container.hide()
+
     def create_add_MediaCard(self, content):
         category = content.get("category", "Unknown")
         result_type = content.get("resultType", None)
@@ -168,27 +133,22 @@ class SearchResultScreen(VerticalFrame):
                 card = self.createAudioCard(content)
                 if card:
                     self.songsContainer.addWidget(card)
-                    self.has_songs = True
             case "Artists":
                 card = self.createArtistCard(content)
                 if card:
                     self.artistsContainer.addWidget(card, alignment=Qt.AlignmentFlag.AlignLeft)
-                    self.has_artists = True
             case "Albums":
                 card = self.createAlbumCard(content)
                 if card:
-                    self.albumsContainer.addWidget(card, alignment=Qt.AlignmentFlag.AlignLeft)
-                    self.has_albums = True
+                    self.albumsContainer.addWidget(card, alignment=Qt.AlignmentFlag.AlignLeft)                
             case "Featured playlists":
                 card = self.createPlaylistCard(content)
                 if card:
-                    self.featuredPlaylistContainer.addWidget(card, alignment=Qt.AlignmentFlag.AlignLeft)
-                    self.has_feature_playlists = True
+                    self.featuredPlaylistContainer.addWidget(card, alignment=Qt.AlignmentFlag.AlignLeft)                
             case "Community playlists":
                 card = self.createPlaylistCard(content)
                 if card:
-                    self.comunityPlaylistContainer.addWidget(card, alignment=Qt.AlignmentFlag.AlignLeft)
-                    self.has_community_playlists = True
+                    self.comunityPlaylistContainer.addWidget(card, alignment=Qt.AlignmentFlag.AlignLeft)                
             case _:
                 match(result_type):
                     case "artist":
@@ -294,10 +254,22 @@ class SearchResultScreen(VerticalFrame):
         self.albumsContainer.clear()
         self.featuredPlaylistContainer.clear()
         self.comunityPlaylistContainer.clear()
+        self.query = None
         self.has_songs = False
         self.has_artists = False
         self.has_albums = False
         self.has_feature_playlists = False
         self.has_community_playlists = False
         
+
+if (__name__ == "__main__"):
+    import json
+    app = QApplication([])
+    widget = SearchResultScreen()
+    with open("data/app/search.json", "r") as f:
+        data = json.load(f)
         
+    widget.setSearchData(data)
+    widget.loadData()
+    widget.show()
+    app.exec()

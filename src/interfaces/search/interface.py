@@ -12,7 +12,7 @@ from src.interfaces.search.results_screen import SearchResultScreen
 from src.interfaces.search.sketeton_animation import SearchResultSkeleton
 from src.utility.check_net_connectivity import is_connected_to_internet
 
-from PySide6.QtWidgets import QApplication, QStackedWidget
+from PySide6.QtWidgets import QApplication, QStackedWidget, QScrollArea
 from PySide6.QtCore import Signal
 
 
@@ -38,8 +38,10 @@ class SearchResultInterface(QStackedWidget):
         self.query = None
         self.search_request_id = None
         
-        self.search_results_screen = SearchResultScreen()
-        self.loading_screen= SearchResultSkeleton()
+        self.search_results_screen = SearchResultScreen(self)
+        self.loading_screen= SearchResultSkeleton(self)
+        
+        
         
         self.addWidget(self.search_results_screen)
         self.addWidget(self.loading_screen)
@@ -135,14 +137,16 @@ class SearchResultInterface(QStackedWidget):
 category = ["Albums", "Songs", "Featured playlists", "Community playlists", "Artists"]
 
 if(__name__ == "__main__"):
+    import json
     app = QApplication(sys.argv)
     setTheme(Theme.DARK)
     data_fetcher = DataFetcherWorker()
     data_fetcher.start()
     w = SearchResultInterface(data_fetcher)
-    # with open("data/app/search.json", "r") as f:
-    #     data = json.load(f)
-    # w._on_search_data_ready(data)
+    with open("data/app/search.json", "r") as f:
+        data = json.load(f)
+    w._on_fetching_finished(data, None)
     # w.load_search("arijit singh")
+    w.search_results_screen.searchBar.clearSignal.connect(w.clear_results)
     w.show()
     sys.exit(app.exec())

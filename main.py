@@ -246,7 +246,9 @@ class LocalManager:
 class MainWindow(FluentWindow):
     def __init__(self, parent= None):
         super().__init__(parent)
-        self.setWindowTitle("Musify")
+        self.setWindowTitle("BeatRoot")
+        self.setWindowIcon(QIcon("app.ico"))
+        self.setWindowIcon
         
         self.datafetcher = DataFetcherWorker()
         self.datafetcher.error_occurred.connect(self.on_error_occurred)
@@ -262,9 +264,9 @@ class MainWindow(FluentWindow):
         self.is_safe_to_close = False
         # to store task async
         # QTimer.singleShot(3000, self.initInterface)
-        self.initInterface()
+        # self.initInterface()
         # connecting signals
-        self.signal_handler = SignalHandler(self)
+        # self.signal_handler = SignalHandler(self)
         
         # self._load_last_played()
         # self._load_last_queue()
@@ -634,19 +636,19 @@ class MainWindow(FluentWindow):
         self.switchTo(self.noInternetInterface)
         self.info_msg_handler.warning_msg("No internet", "No internet connection")
         
-    def resizeEvent(self, e):
+    # def resizeEvent(self, e):
         
         
-        # if hasattr(self, 'bottomPlayer'):
-        self.bottomPlayer.move(0, self.height() - self.bottomPlayer.height())
-        self.bottomPlayer.resize(self.width(), self.bottomPlayer.height())   
+    #     # if hasattr(self, 'bottomPlayer'):
+    #     self.bottomPlayer.move(0, self.height() - self.bottomPlayer.height())
+    #     self.bottomPlayer.resize(self.width(), self.bottomPlayer.height())   
         
         
-        width = int(self.stackedWidget.width()/100 * 70)
-        height = self.titleBar.height()
-        self.queue.setFixedSize(width, self.stackedWidget.height() + 2)
-        self.queue.move(self.width() - self.queue.width(), height)
-        super().resizeEvent(e)
+    #     width = int(self.stackedWidget.width()/100 * 70)
+    #     height = self.titleBar.height()
+    #     self.queue.setFixedSize(width, self.stackedWidget.height() + 2)
+    #     self.queue.move(self.width() - self.queue.width(), height)
+    #     super().resizeEvent(e)
         
     @asyncClose
     async def closeEvent(self, event):
@@ -764,6 +766,8 @@ def main():
 
     # Create the Qt application
     app = QApplication(sys.argv)
+    # app icon
+    app.setWindowIcon(QIcon("app.ico"))
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)  # Set the event loop for asyncio
 
@@ -777,9 +781,10 @@ def main():
     # window.setWindowState(Qt.WindowState.WindowFullScreen)
     window.setContentsMargins(0, 0, 0, 98)
     window.move(100, 100)
-    # window.showMaximized()
-    window.showFullScreen()
+    window.showMaximized()
+    # window.showFullScreen()
 
+    
     # Create an event to signal app closure
     app_close_event = asyncio.Event()
 

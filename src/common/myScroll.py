@@ -34,6 +34,7 @@ class MyScrollWidgetBase(QFrame):
         self.lastMousePos = QPoint()
         self.speedFactor = 1.0
         
+        
     def initScrollLayout(self):
         self.scrollContainer_layout = QVBoxLayout(self.scrollContainer)
         self.scrollContainer.setLayout(self.scrollContainer_layout)
@@ -126,13 +127,31 @@ class MyScrollWidgetBase(QFrame):
         else:
             super().mouseMoveEvent(event)
             
-    def clear(self, type_:QObject | None = None):
-        for i in range(self.scrollContainer_layout.count()):
-            widget = self.scrollContainer_layout.itemAt(i).widget()
-            if type_ is None or type_ == False:
-                widget.deleteLater()
-            elif isinstance(widget, type_):
-                widget.deleteLater()
+    def clear(self, type_: QObject | None = None):
+        for i in reversed(range(self.scrollContainer_layout.count())):  # Iterate in reverse
+            item = self.scrollContainer_layout.itemAt(i)
+            if not item:
+                continue  # Skip if item is None
+            
+            widget = item.widget()
+            if widget is None:
+                continue  # Avoid calling delete_widget on None
+            
+            if type_ is None or isinstance(widget, type_):  # Remove if no type is specified or matches type_
+                self.delete_widget(widget)
+                
+    def delete_widget(self, widget: QObject):
+        if not widget or not hasattr(widget, "deleteLater"):
+            return  # Safety check
+
+        if widget.parent() is not None:
+            widget.setParent(None)  # Detach from parent before deletion
+
+        if self.scrollContainer_layout.indexOf(widget) != -1:  # Ensure widget is in layout before removing
+            self.scrollContainer_layout.removeWidget(widget)
+
+        widget.deleteLater()  # Schedule for deletion
+
             
     # def block_child_signal(self):
         # self.scr
@@ -187,17 +206,61 @@ class MyScrollWidgetBase(QFrame):
 class SideScrollWidget(MyScrollWidgetBase):
     def __init__(self, title: str, parent=None):
         super().__init__(title, parent)
+        
+        # Disabling the vertical scrollbar
         self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         
+        # Spacer initialization to push widgets horizontally
+        self.spacer = QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.current_spacer = None
+        self.min_height = 0
+        
     def initScrollLayout(self):
+        """Initializes the scroll layout to hold widgets in a horizontal arrangement."""
         self.scrollContainer_layout = QHBoxLayout(self.scrollContainer)
         self.scrollContainer.setLayout(self.scrollContainer_layout)   
-        
-    def addWidget(self, widget, stretch = 0, alignment = Qt.AlignmentFlag.AlignLeft):
-        return super().addWidget(widget, stretch, alignment)
     
-    def insertWidget(self, index, widget, stretch=0, alignment = Qt.AlignmentFlag.AlignLeft):
+    def addWidget(self, widget: QObject, stretch=0, alignment=Qt.AlignmentFlag.AlignLeft):
+        """
+        Adds a widget to the scroll container and adjusts the scroll area height dynamically.
+        
+        :param widget: The widget to add to the scroll area.
+        :param stretch: The stretch factor for the widget.
+        :param alignment: The alignment of the widget within the scroll area.
+        """
+        # Remove any previous spacer
+        if self.current_spacer:
+            self.scrollContainer_layout.removeItem(self.current_spacer)
+        
+        self.current_spacer = self.spacer  # Set the current spacer
+        
+        
+        # Adjust minimum height based on the widget height
+        widget_height = widget.sizeHint().height()
+        layout_margin = self.scrollContainer_layout.contentsMargins()
+        widget_height += layout_margin.top() + layout_margin.bottom()
+        if widget_height > self.min_height:
+            self.scrollArea.setMinimumHeight(widget_height)
+            self.min_height = widget_height
+
+        # Add the widget and spacer to the layout
+        super().addWidget(widget, stretch, alignment)
+        super().addSpacerItem(self.current_spacer)
+        
+        # Update geometry after adding the widget
+        self.updateGeometry()
+    
+    def insertWidget(self, index, widget, stretch=0, alignment=Qt.AlignmentFlag.AlignLeft):
+        """Inserts a widget at the specified index."""
         return super().insertWidget(index, widget, stretch, alignment)
+    
+    def count(self):
+        """
+        Returns the number of widgets in the layout, accounting for the spacer item.
+        """
+        if self.current_spacer:
+            return super().count() - 1  # Subtract 1 to account for the spacer
+        return super().count()
         
 class VerticalScrollWidget(MyScrollWidgetBase):
     def __init__(self, title: str = None, parent=None):
@@ -248,6 +311,7 @@ if(__name__ == "__main__"):
     w  = SideScrollWidget(None)
     for x in range(10):
         card = PlaylistCard()
+        card.sizeHint().width()
         card.setTitle(f"playlist: {x}")
         card.clicked.connect(lambda: print("clicked"))
         w.addWidget(card)

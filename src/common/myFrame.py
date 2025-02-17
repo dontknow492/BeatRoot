@@ -130,15 +130,34 @@ class MyFrameBase(QFrame):
 
     def clear(self, type_: QObject | None = None):
         print('clear', type_)
-        for i in range(self.mainLayout.count()):
-            widget = self.mainLayout.itemAt(i).widget()
-            if not type_:
-                # self.mainLayout.removeWidget(widget)
-                widget.deleteLater()
-            elif isinstance(widget, type_):
-                widget.deleteLater()
-                
-        self.mainLayout.update()
+        
+        for i in reversed(range(self.mainLayout.count())):  # Iterate in reverse to avoid index shifting
+            item = self.mainLayout.itemAt(i)
+            if item is None:
+                continue  # Don't exit early, just skip this item
+            
+            widget = item.widget()
+            if widget is None:
+                continue  # Ensure widget exists before attempting to remove
+
+            if type_ is None or isinstance(widget, type_):  # Remove all or only matching type
+                self.delete_widget(widget)
+
+        self.mainLayout.update()  # Ensure layout updates properly
+
+        
+    def delete_widget(self, widget: QObject):
+        if not widget or not hasattr(widget, "deleteLater"):
+            return  # Safety check
+
+        if widget.parent() is not None:
+            widget.setParent(None)  # Detach from parent before deletion
+
+        if self.mainLayout.indexOf(widget) != -1:  # Ensure widget is in layout before removing
+            self.mainLayout.removeWidget(widget)
+
+        widget.deleteLater()  # Schedule for deletion
+
         
 class FlowFrame(MyFrameBase):
     def __init__(self, parent = None):
