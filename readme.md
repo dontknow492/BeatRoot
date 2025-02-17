@@ -191,25 +191,26 @@ Contributions are welcome! Please follow:
 ## Screenshots 📸
 
 #### Home view showing featured content
-![Home Interface](screenshots/home.png)
+<img src="screenshots/home.png" alt="Home Interface" style="border-radius: 10px; width: 500px;  /* Adjust width as needed */">
 
 #### Compact bottom player controls 
-![Player Interface](screenshots/player.png)
+<img src="screenshots/player.png" alt="Player Interface" style="border-radius: 4px; width: 500px;  /* Adjust width as needed */">
 
 #### Search any music 
-![Search Interface](screenshots/search.png)
+<img src="screenshots/search.png" alt="Search Interface" style="border-radius: 10px;/* Adjust width as needed */">
 
-#### View play playlist, artist, releated songs 
-![Playlist](screenshots/playlist.png)
+#### View play playlist, artist, releated songs
+<img src="screenshots/playlist.png" alt="Playlist" style="border-radius: 10px;/* Adjust width as needed */">
 
 #### Elignent and real time lyrics 
-![Lyrics Interface](screenshots/lyrics.png)
+<img src="screenshots/lyrics.png" alt="Lyrics Interface" style="border-radius: 10px;/* Adjust width as needed */">
 
 #### Get your stats, usage reports, top song, artist, etc 
-![Stats Interface](screenshots/stats.png)
+![]()
+<img src="screenshots/stats.png" alt="Stats Interface" style="border-radius: 10px;/* Adjust width as needed */">
 
-#### Dark theme appearance 
-![Dark Theme](screenshots/home_dark.png)
+#### Dark theme appearance
+<img src="screenshots/home_dark.png" alt="Dark Theme" style="border-radius: 10px;/* Adjust width as needed */">
 
 
 ## Support ❤️
