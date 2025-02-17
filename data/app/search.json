@@ -459,6 +459,170 @@
         ]
     },
     {
+        "category": "Albums",
+        "resultType": "album",
+        "title": "Arijit Singh (All Time Hits)",
+        "type": "Album",
+        "playlistId": "OLAK5uy_kmxZ5UDeKHVBeRWCDSvz1kAX2pwHjNQ8E",
+        "duration": null,
+        "year": "2023",
+        "artists": [
+            {
+                "name": "Arijit Singh",
+                "id": "UCDxKh1gFWeYsqePvgVzmPoQ"
+            }
+        ],
+        "browseId": "MPREb_H647khRwcJr",
+        "isExplicit": false,
+        "thumbnails": [
+            {
+                "url": "https://lh3.googleusercontent.com/B1z-UKylhMdvvEz8mwcQAVgfa60340TqQhCDUEv4H-HJuFJ-EZewsDQOhAQmyz1ohisykRIdaQZfd1iO=w60-h60-l90-rj",
+                "width": 60,
+                "height": 60
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/B1z-UKylhMdvvEz8mwcQAVgfa60340TqQhCDUEv4H-HJuFJ-EZewsDQOhAQmyz1ohisykRIdaQZfd1iO=w120-h120-l90-rj",
+                "width": 120,
+                "height": 120
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/B1z-UKylhMdvvEz8mwcQAVgfa60340TqQhCDUEv4H-HJuFJ-EZewsDQOhAQmyz1ohisykRIdaQZfd1iO=w226-h226-l90-rj",
+                "width": 226,
+                "height": 226
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/B1z-UKylhMdvvEz8mwcQAVgfa60340TqQhCDUEv4H-HJuFJ-EZewsDQOhAQmyz1ohisykRIdaQZfd1iO=w544-h544-l90-rj",
+                "width": 544,
+                "height": 544
+            }
+        ]
+    },
+    {
+        "category": "Albums",
+        "resultType": "album",
+        "title": "Dhokha",
+        "type": "Single",
+        "playlistId": "OLAK5uy_lzmsRTm0MrCvcZlua4hLcNiUwzvwm_wJ8",
+        "duration": null,
+        "year": "2022",
+        "artists": [
+            {
+                "name": "Arijit Singh",
+                "id": "UCDxKh1gFWeYsqePvgVzmPoQ"
+            },
+            {
+                "name": "Manan Bhardwaj",
+                "id": "UCEPthlKqYt608mql5UTzlWQ"
+            }
+        ],
+        "browseId": "MPREb_ZQa7GxTDOEc",
+        "isExplicit": false,
+        "thumbnails": [
+            {
+                "url": "https://lh3.googleusercontent.com/EXgS1qTaFeZxoV1GCbQ-v0lkCuDk_qFU3WJ4yxtaFsfv3jXhU_VN69-M-CtwEt-AX61p_UHwVDjYxQg=w60-h60-l90-rj",
+                "width": 60,
+                "height": 60
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/EXgS1qTaFeZxoV1GCbQ-v0lkCuDk_qFU3WJ4yxtaFsfv3jXhU_VN69-M-CtwEt-AX61p_UHwVDjYxQg=w120-h120-l90-rj",
+                "width": 120,
+                "height": 120
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/EXgS1qTaFeZxoV1GCbQ-v0lkCuDk_qFU3WJ4yxtaFsfv3jXhU_VN69-M-CtwEt-AX61p_UHwVDjYxQg=w226-h226-l90-rj",
+                "width": 226,
+                "height": 226
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/EXgS1qTaFeZxoV1GCbQ-v0lkCuDk_qFU3WJ4yxtaFsfv3jXhU_VN69-M-CtwEt-AX61p_UHwVDjYxQg=w544-h544-l90-rj",
+                "width": 544,
+                "height": 544
+            }
+        ]
+    },
+    {
+        "category": "Albums",
+        "resultType": "album",
+        "title": "Arijit Singh (All Time Hits)",
+        "type": "Album",
+        "playlistId": "OLAK5uy_kmxZ5UDeKHVBeRWCDSvz1kAX2pwHjNQ8E",
+        "duration": null,
+        "year": "2023",
+        "artists": [
+            {
+                "name": "Arijit Singh",
+                "id": "UCDxKh1gFWeYsqePvgVzmPoQ"
+            }
+        ],
+        "browseId": "MPREb_H647khRwcJr",
+        "isExplicit": false,
+        "thumbnails": [
+            {
+                "url": "https://lh3.googleusercontent.com/B1z-UKylhMdvvEz8mwcQAVgfa60340TqQhCDUEv4H-HJuFJ-EZewsDQOhAQmyz1ohisykRIdaQZfd1iO=w60-h60-l90-rj",
+                "width": 60,
+                "height": 60
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/B1z-UKylhMdvvEz8mwcQAVgfa60340TqQhCDUEv4H-HJuFJ-EZewsDQOhAQmyz1ohisykRIdaQZfd1iO=w120-h120-l90-rj",
+                "width": 120,
+                "height": 120
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/B1z-UKylhMdvvEz8mwcQAVgfa60340TqQhCDUEv4H-HJuFJ-EZewsDQOhAQmyz1ohisykRIdaQZfd1iO=w226-h226-l90-rj",
+                "width": 226,
+                "height": 226
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/B1z-UKylhMdvvEz8mwcQAVgfa60340TqQhCDUEv4H-HJuFJ-EZewsDQOhAQmyz1ohisykRIdaQZfd1iO=w544-h544-l90-rj",
+                "width": 544,
+                "height": 544
+            }
+        ]
+    },
+    {
+        "category": "Albums",
+        "resultType": "album",
+        "title": "Dhokha",
+        "type": "Single",
+        "playlistId": "OLAK5uy_lzmsRTm0MrCvcZlua4hLcNiUwzvwm_wJ8",
+        "duration": null,
+        "year": "2022",
+        "artists": [
+            {
+                "name": "Arijit Singh",
+                "id": "UCDxKh1gFWeYsqePvgVzmPoQ"
+            },
+            {
+                "name": "Manan Bhardwaj",
+                "id": "UCEPthlKqYt608mql5UTzlWQ"
+            }
+        ],
+        "browseId": "MPREb_ZQa7GxTDOEc",
+        "isExplicit": false,
+        "thumbnails": [
+            {
+                "url": "https://lh3.googleusercontent.com/EXgS1qTaFeZxoV1GCbQ-v0lkCuDk_qFU3WJ4yxtaFsfv3jXhU_VN69-M-CtwEt-AX61p_UHwVDjYxQg=w60-h60-l90-rj",
+                "width": 60,
+                "height": 60
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/EXgS1qTaFeZxoV1GCbQ-v0lkCuDk_qFU3WJ4yxtaFsfv3jXhU_VN69-M-CtwEt-AX61p_UHwVDjYxQg=w120-h120-l90-rj",
+                "width": 120,
+                "height": 120
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/EXgS1qTaFeZxoV1GCbQ-v0lkCuDk_qFU3WJ4yxtaFsfv3jXhU_VN69-M-CtwEt-AX61p_UHwVDjYxQg=w226-h226-l90-rj",
+                "width": 226,
+                "height": 226
+            },
+            {
+                "url": "https://lh3.googleusercontent.com/EXgS1qTaFeZxoV1GCbQ-v0lkCuDk_qFU3WJ4yxtaFsfv3jXhU_VN69-M-CtwEt-AX61p_UHwVDjYxQg=w544-h544-l90-rj",
+                "width": 544,
+                "height": 544
+            }
+        ]
+    },
+    {
         "category": "Featured playlists",
         "resultType": "playlist",
         "title": "Presenting Arijit Singh",

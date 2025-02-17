@@ -264,9 +264,9 @@ class MainWindow(FluentWindow):
         self.is_safe_to_close = False
         # to store task async
         # QTimer.singleShot(3000, self.initInterface)
-        # self.initInterface()
+        self.initInterface()
         # connecting signals
-        # self.signal_handler = SignalHandler(self)
+        self.signal_handler = SignalHandler(self)
         
         # self._load_last_played()
         # self._load_last_queue()
@@ -636,19 +636,19 @@ class MainWindow(FluentWindow):
         self.switchTo(self.noInternetInterface)
         self.info_msg_handler.warning_msg("No internet", "No internet connection")
         
-    # def resizeEvent(self, e):
+    def resizeEvent(self, e):
         
         
-    #     # if hasattr(self, 'bottomPlayer'):
-    #     self.bottomPlayer.move(0, self.height() - self.bottomPlayer.height())
-    #     self.bottomPlayer.resize(self.width(), self.bottomPlayer.height())   
+        # if hasattr(self, 'bottomPlayer'):
+        self.bottomPlayer.move(0, self.height() - self.bottomPlayer.height())
+        self.bottomPlayer.resize(self.width(), self.bottomPlayer.height())   
         
         
-    #     width = int(self.stackedWidget.width()/100 * 70)
-    #     height = self.titleBar.height()
-    #     self.queue.setFixedSize(width, self.stackedWidget.height() + 2)
-    #     self.queue.move(self.width() - self.queue.width(), height)
-    #     super().resizeEvent(e)
+        width = int(self.stackedWidget.width()/100 * 70)
+        height = self.titleBar.height()
+        self.queue.setFixedSize(width, self.stackedWidget.height() + 2)
+        self.queue.move(self.width() - self.queue.width(), height)
+        super().resizeEvent(e)
         
     @asyncClose
     async def closeEvent(self, event):

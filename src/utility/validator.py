@@ -33,8 +33,9 @@ def is_youtube_thumbnail_url(url):
 
 # Example usage:
 if(__name__ == "__main__"):
-    path = r"D:\Program\Musify\src\ui\statsCard.py"
-    type_ = 'file'
+    print(is_youtube_thumbnail_url("https://lh3.googleusercontent.com/WxgWxNU5Ix7oR3pkJcTSWhcuPs9ZY4RtQl_IMb68ebZ0v3smSuGoTGvPaTFEHgUj3XBFkKqJBzwiLWtf=w544-h544-l90-rj"))
+    # path = r"D:\Program\Musify\src\ui\statsCard.py"
+    # type_ = 'file'
 
-    result = validate_path(path, type_)
-    print(result)
+    # result = validate_path(path, type_)
+    # print(result)

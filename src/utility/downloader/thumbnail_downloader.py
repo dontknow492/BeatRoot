@@ -59,7 +59,8 @@ class ThumbnailDownloader(QObject):
         reply.output_path = str(Path(output_dir) / output_name)
         reply.uid = uid
         reply.crop = is_youtube_thumbnail_url(url)
-        logger.info(f"Need to Crop the image: {url}")
+        if reply.crop:
+            logger.info(f"Need to Crop the image: {url}")
         # Connect the finished signal to a slot
         reply.finished.connect(lambda: self.handle_thumbnail_download_finished(reply))
         

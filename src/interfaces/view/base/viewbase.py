@@ -1,7 +1,7 @@
 
 from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolButton, TransparentPushButton
 from qfluentwidgets import FluentIcon, setCustomStyleSheet, PrimaryPushButton
-from qfluentwidgets import SearchLineEdit, Pivot, ComboBox, FlowLayout
+from qfluentwidgets import RoundMenu, Action
 
 
 import sys
@@ -27,6 +27,7 @@ from src.utility.misc import get_thumbnail_url
 from src.animation import WideCardSkeleton, LandscapeAudioSkeleton
 from src.utility.enums import ImageFolder
 from src.utility.image_utility import blur_pixmap
+from src.utility.iconManager import ThemedIcon
 from src.api.data_fetcher import YTMusicMethod, DataFetcherWorker
 
 from PySide6.QtWidgets import QFrame, QStackedWidget
@@ -203,7 +204,25 @@ class ViewBase(VerticalScrollWidget):
             card.albumClicked.connect(self.albumClicked.emit)
             card.artistClicked.connect(self.artistClicked.emit)
             # self.
+            self.create_audio_menu(card)
             return card
+        
+    def create_audio_menu(self, card: AudioCard):
+        menu = RoundMenu()
+        menu.setCursor(Qt.CursorShape.PointingHandCursor)
+        menu.addActions([
+            Action(FluentIcon.RIGHT_ARROW,"Add to queue"),
+            Action(FluentIcon.ADD_TO,"Add to playlist"),
+            Action(FluentIcon.HEART,"Add to favorites"),
+            Action(FluentIcon.ALBUM,"Go to album")
+            ])
+        menu.addSeparator()
+        menu.addActions([
+            Action(FluentIcon.DOWNLOAD, "Download"),
+            Action(FluentIcon.GLOBE,"Open in Browser"),
+            Action(FluentIcon.SHARE,"Share")
+        ])
+        card.setMenu(menu)
         
     def setPortraitAlbumCardInfo(self, card: PortraitAlbumCard, album_data: dict):
         album_id = album_data.get("browseId", None)

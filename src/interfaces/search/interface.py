@@ -38,6 +38,7 @@ class SearchResultInterface(QStackedWidget):
         self.query = None
         self.search_request_id = None
         
+        
         self.search_results_screen = SearchResultScreen(self)
         self.loading_screen= SearchResultSkeleton(self)
         
@@ -59,6 +60,7 @@ class SearchResultInterface(QStackedWidget):
         self.search_results_screen.playlistAddtoClicked.connect(self.playlistAddtoClicked.emit)
         self.search_results_screen.albumPlayClicked.connect(self.albumPlayClicked.emit)
         self.search_results_screen.albumAddtoClicked.connect(self.albumAddtoClicked.emit)
+        self.search_results_screen.loadMoreButton.clicked.connect(self.load_more)
         
     def switch_to(self, widget):
         """
@@ -101,6 +103,23 @@ class SearchResultInterface(QStackedWidget):
             self.noInternet.emit()
             return
         self._fetch_search_data(query)
+        
+    def load_more(self):
+        if not is_connected_to_internet():
+            self.noInternet.emit()
+            return
+        if self.query is None or self.query == "":
+            logger.warning("No query to load more results for.")
+            return
+        limit = self.search_results_screen.song_count + 10
+        try:
+            self.search_request_id = self.data_fetcher.add_request(YTMusicMethod.SEARCH, self.query, filter="songs", limit= limit)
+        except Exception as e:
+            logger.exception(f"Error starting data fetcher: {e}")
+            self.switch_to(self.search_results_screen)
+            
+        if limit > 50:
+            self.search_results_screen.loadMoreButton.hide()
 
     def _fetch_search_data(self, query):
         """
@@ -124,8 +143,7 @@ class SearchResultInterface(QStackedWidget):
             data: The fetched data for the search screen.
         """
         # Set the data to the search screen
-        self.search_results_screen.setSearchData(data)
-        self.search_results_screen.loadData()
+        self.search_results_screen.loadData(data)
         logger.success("search UI loaded.")
         self.loading_screen.stop_animation()
         self.switch_to(self.search_results_screen) 
@@ -146,7 +164,11 @@ if(__name__ == "__main__"):
     with open("data/app/search.json", "r") as f:
         data = json.load(f)
     w._on_fetching_finished(data, None)
+    w.query = "arijit singh"
     # w.load_search("arijit singh")
     w.search_results_screen.searchBar.clearSignal.connect(w.clear_results)
     w.show()
+    
+    # print(frame.findChild(QObject, "card_0"))
+    
     sys.exit(app.exec())

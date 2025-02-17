@@ -117,12 +117,8 @@ class AudioCardBase(HorizontalFrame):
         self.authorContainer.setLayoutMargins(0, 0, 0, 0)
         self.authorContainer.setHorizantalSpacing(4)
         self.authorContainer.setVerticalSpacing(0)
-        # self.authorLabel = MyBodyLabel("Author", self.title_author_container, is_underline= False)
-        # self.authorLabel.setWordWrap(True)
-        # self.authorLabel.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.title_author_container.addWidget(self.titleLabel)
         self.title_author_container.addWidget(self.authorContainer, alignment= Qt.AlignmentFlag.AlignTop)
-        # self.title_author_container.addWidget(self.authorLabel)
         
     def init_end_container(self):
         self.end_container =HorizontalFrame(self)
@@ -161,7 +157,7 @@ class AudioCardBase(HorizontalFrame):
         pass
     
     def dragTime(self):
-        self.dragButton.setCursor(Qt.ClosedHandCursor)
+        self.dragButton.setCursor(Qt.CursorShape.SizeAllCursor)
         # self.setStyleSheet("background-color: #e0f7f7")
         drag = QDrag(self)
         mime = QMimeData()
@@ -182,15 +178,18 @@ class AudioCardBase(HorizontalFrame):
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             if self.state == self.AudioState.LOADING:
-                return
+                return  # Prevent further action when loading
             else:
                 self.toggle_state()
             self.clicked.emit()
-        if event.button() == Qt.RightButton:
+        elif event.button() == Qt.RightButton:
             print("Right button clicked")
-            self.optionButton.showMenu()
-        return super().mousePressEvent(event)
-        
+            menu = self.optionButton.menu()
+            if menu:
+                menu.popup(self.mapToGlobal(event.position().toPoint()))  # Correct way to show the menu
+        else:
+            super().mousePressEvent(event)  # Pass other events to parent class
+
     def setCoverLoading(self, state: bool):
         size = self.coverLabel.size()
         self.loadingLabel.setFixedSize(size)
@@ -235,7 +234,7 @@ class AudioCardBase(HorizontalFrame):
 
 
 class AudioCard(AudioCardBase):
-    def __init__(self, is_dragable: bool= False,parent=None):
+    def __init__(self, is_dragable: bool= False, parent=None):
         super().__init__(parent=parent)
         self.setCursor(Qt.PointingHandCursor)
         self.isdragable = is_dragable
@@ -378,7 +377,6 @@ class AudioCard(AudioCardBase):
         self.setAudioId(song_id)
         self.setObjectName(f"{song_id}_card")
         title = audio_data.get("title", "Unknown")
-        # thumbnail = audio_data.get("thumbnail", None)
         artists = audio_data.get("artists", "")
         duration = audio_data.get("duration", "Unknown")
         album = audio_data.get("album", "Unknown")
@@ -415,14 +413,31 @@ class AudioCard(AudioCardBase):
             self.artistClicked.disconnect()
             
         
-        
+
+def create_audio_menu(card: AudioCard):
+        menu = RoundMenu()
+        # menu.setCursor(Qt.CursorShape.PointingHandCursor)
+        menu.addActions([
+            Action(FluentIcon.RIGHT_ARROW,"Add to queue"),
+            Action(FluentIcon.ADD_TO,"Add to playlist"),
+            Action(FluentIcon.HEART,"Add to favorites"),
+            Action(FluentIcon.ALBUM,"Go to album")
+            ])
+        menu.addSeparator()
+        menu.addActions([
+            Action(FluentIcon.DOWNLOAD, "Download"),
+            Action(FluentIcon.GLOBE,"Open in Browser"),
+            Action(FluentIcon.SHARE,"Share")
+        ])
+        card.setMenu(menu)    
     
 if(__name__ == '__main__'):
     app = QApplication(sys.argv)
     window =VerticalFrame()
-    # movie = QMovie(r"D:\Downloads\Images\loading-loading-forever.gif")
+    menu = RoundMenu()
+    menu.addAction(Action("Add to playlist"))
     for _ in range(4):
-        card = AudioCard()
+        card = AudioCard(True)
         album = {
             "name": "this is gona be big bro",
             "id": "1234"
@@ -442,6 +457,7 @@ if(__name__ == '__main__'):
         window.addWidget(card)
         card.albumClicked.connect(lambda id_: print("album clicked: ", id_))
         card.artistClicked.connect(lambda id_: print("artist clicked: ", id_))
+        create_audio_menu(card)
     # card.setCoverLoading(True)
 
     window.show()

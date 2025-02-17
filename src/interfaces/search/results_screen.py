@@ -1,6 +1,6 @@
 from qfluentwidgets import TitleLabel, PrimaryPushButton
 from qfluentwidgets import PrimaryPushButton, SearchLineEdit
-from qfluentwidgets import SearchLineEdit
+from qfluentwidgets import SearchLineEdit, RoundMenu, Action, FluentIcon
 
 
 import sys
@@ -16,9 +16,10 @@ from src.components.cards.artistCard import ArtistCard
 from src.components.cards.audioCard import AudioCard
 from src.utility.downloader.thumbnail_downloader import ThumbnailDownloader
 from src.utility.enums import ImageFolder
+from src.utility.iconManager import ThemedIcon
 
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QSpacerItem, QSizePolicy, QStackedWidget
-from PySide6.QtCore import Qt, QSize, Signal, QObject
+from PySide6.QtCore import Qt, QSize, Signal, QObject, QTimer
 
 
 import queue
@@ -40,6 +41,7 @@ class SearchResultScreen(VerticalFrame):
         self.thumbnail_downloader = ThumbnailDownloader(self)
         self.thumbnail_downloader.download_finished.connect(self.set_card_cover)
         self.has_songs = False
+        self.song_count = 1
         self.cover_queue = queue.Queue()
         
         self.initUi()
@@ -57,7 +59,7 @@ class SearchResultScreen(VerticalFrame):
         while not self.cover_queue.empty():
             path, uid = self.cover_queue.get()
             object_name = f"{uid}_card"
-            card = self.findChild(QFrame, object_name)
+            card = self.findChild(QObject, object_name)
             if card:
                 logger.info(f"Setting cover for: {object_name} from queue")
                 card.setCover(path)
@@ -105,15 +107,13 @@ class SearchResultScreen(VerticalFrame):
         self.addWidget(self.mediaContainer)
         
     
-    def setSearchData(self, data):
-        self.searchData = data
     
-    def loadData(self):
-        if not hasattr(self, "searchData"):
-            return
-        for content in self.searchData:
+    def loadData(self, data):
+        for content in data:
             self.create_add_MediaCard(content)
         self.toggle_containers()
+    
+        QTimer.singleShot(2000, self.set_cover_from_queue)
         
     def toggle_containers(self):
         contnaires = [self.artistsContainer
@@ -202,12 +202,14 @@ class SearchResultScreen(VerticalFrame):
         thumbnail = artist.get("thumbnails", [{}])[-1].get("url", None)
         card = ArtistCard()
         card.setCardInfo(artist)
+        # card.setObjectName(f"{browse_id}_card")
         self.thumbnail_downloader.download_thumbnail(
             thumbnail,
             f"{browse_id}.png",
             ImageFolder.ARTIST.path,
             browse_id
         )
+        logger.debug(f"Artist Card: {card}-{card.objectName()}")
         card.clicked.connect(lambda: self.artistCardClicked.emit(browse_id))
         return card
     
@@ -235,10 +237,16 @@ class SearchResultScreen(VerticalFrame):
         if video_id is None:
             logger.warning(f"Audio ID not found: {audio.keys()}")
             return None
+        if self.findChild(AudioCard, f"{video_id}_card"):
+            logger.warning(f"Audio card already exists: {video_id}")
+            return None
         thumbnail = audio.get("thumbnails", [{}])[-1].get("url", None)
         
         card = AudioCard()
+        card.setObjectName(f"{video_id}_card")
         card.setCardInfo(audio)
+        card.setCount(self.song_count)
+        self.song_count +=1
         self.thumbnail_downloader.download_thumbnail(
             thumbnail,
             f"{video_id}.png",
@@ -246,7 +254,25 @@ class SearchResultScreen(VerticalFrame):
             video_id
         )
         card.clicked.connect(lambda: self.audioCardClicked.emit(audio))
+        self.create_audio_menu(card)
         return card
+    
+    def create_audio_menu(self, card: AudioCard):
+        menu = RoundMenu()
+        menu.setCursor(Qt.CursorShape.PointingHandCursor)
+        menu.addActions([
+            Action(FluentIcon.RIGHT_ARROW,"Add to queue"),
+            Action(FluentIcon.ADD_TO,"Add to playlist"),
+            Action(FluentIcon.HEART,"Add to favorites"),
+            Action(FluentIcon.ALBUM,"Go to album")
+            ])
+        menu.addSeparator()
+        menu.addActions([
+            Action(FluentIcon.DOWNLOAD, "Download"),
+            Action(FluentIcon.GLOBE,"Open in Browser"),
+            Action(FluentIcon.SHARE,"Share")
+        ])
+        card.setMenu(menu)
     
     def clear_results(self):
         self.songsContainer.clear()
@@ -255,11 +281,8 @@ class SearchResultScreen(VerticalFrame):
         self.featuredPlaylistContainer.clear()
         self.comunityPlaylistContainer.clear()
         self.query = None
+        self.song_count = 1
         self.has_songs = False
-        self.has_artists = False
-        self.has_albums = False
-        self.has_feature_playlists = False
-        self.has_community_playlists = False
         
 
 if (__name__ == "__main__"):
@@ -269,7 +292,7 @@ if (__name__ == "__main__"):
     with open("data/app/search.json", "r") as f:
         data = json.load(f)
         
-    widget.setSearchData(data)
-    widget.loadData()
+    # widget.setSearchData()
+    widget.loadData(data)
     widget.show()
     app.exec()

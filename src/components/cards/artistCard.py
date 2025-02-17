@@ -4,13 +4,13 @@ from qfluentwidgets import AvatarWidget, FluentIcon, InfoBadge, InfoBadgePositio
 
 
 import sys
-sys.path.append('src')
+sys.path.append(r'D:\Program\Musify')
 from src.utility.enums import PlaceHolder
 from src.utility.enums import ImageFolder
 from pathlib import Path
 
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy
-from PySide6.QtCore import Qt, QSize, Signal
+from PySide6.QtCore import Qt, QSize, Signal, QObject
 from PySide6.QtGui import QFont, QColor
 from PySide6.QtWidgets import QGraphicsDropShadowEffect
 
@@ -69,7 +69,7 @@ class ArtistCard(CardWidget):
             self.setCover(str(path))
         subscribers = artist_data.get("subscribers", None)
         # artists = album.get("artists", [])
-        self.setObjectName(f"{browse_id}_card")
+        # self.setObjectName(f"{browse_id}_card") done in set artistid function
         self.setArtistName(title)
         self.setArtistId(browse_id)
         self.setSubscribers(subscribers)
@@ -84,7 +84,7 @@ class ArtistCard(CardWidget):
     
     def setArtistId(self, artist_id):
         self.artistID = artist_id
-        self.setObjectName(artist_id)
+        self.setObjectName(f"{artist_id}_card")
         
     def getArtistID(self):
         return self.artistID
@@ -105,6 +105,7 @@ class ArtistCard(CardWidget):
     def setCover(self, cover_path):
         if Path(cover_path).exists() and self.cover_path != cover_path:
             self.cover_path = cover_path
+            self.coverLabel.clear()
             self.coverLabel.setImage(cover_path)
             self.coverLabel.setRadius(75)
             
@@ -116,10 +117,18 @@ class ArtistCard(CardWidget):
         return super().mousePressEvent(e)
         
         
+
+        
 if(__name__ == '__main__'):
     
     app = QApplication(sys.argv)
-    window = ArtistCard()
-    window.setArtistName("Artist  Name but kinda big")
-    window.show()
+    frame = QFrame()
+    w = 0 
+    for x in range(3):
+        card = ArtistCard(parent = frame)
+        card.setObjectName(f"card_{x}")
+        card.move(w, 0)
+        w += 170
+    frame.show()
+    print(frame.findChild(QObject, "card_0"))
     app.exec()
