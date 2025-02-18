@@ -1,8 +1,13 @@
 PySide6
-qfluentwidgets
+PySide6-Fluent-Widgets
 ytmusicapi
 loguru
 mutagen
 python-vlc
-ytdlp
+yt-dlp
 qsaync
+xxhash
+cachetools
+aiosqlite
+aiofiles
+pillow

@@ -63,6 +63,7 @@ class RectSkeletonScreen(BaseSkeletonScreen):
         self.rect_height = height
         self.pos_x = x
         self.pos_y = y
+        self.setFixedSize(width, height)
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -98,7 +99,7 @@ class HorizontalRectSkeletonScreen(BaseSkeletonScreen):
         self.rect_height = height
         self.pos_x = x
         self.pos_y = y
-        
+        self.setFixedHeight(height)
         
 
     def paintEvent(self, event):
@@ -116,6 +117,7 @@ class VerticalRectSkeletonScreen(BaseSkeletonScreen):
         self.rect_width = width
         self.pos_x = x
         self.pos_y = y
+        self.setFixedWidth(width)
 
     def paintEvent(self, event):
         painter = QPainter(self)

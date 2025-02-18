@@ -24,6 +24,7 @@ class YTMusicMethod(Enum):
     GET_GENRE = "get_genre"
     GET_STREAM_URL = "get_stream_url"
     GET_WATCH_PLAYLIST = "get_watch_playlist"
+    GET_LYRICS = "get_lyrics"
 
 class RequestPriority(Enum):
     HIGH = 0
@@ -135,6 +136,7 @@ class DataFetcherWorker(QThread):
                 case YTMusicMethod.GET_SONG: return self._ytmusic.get_song(*args, **kwargs)
                 case YTMusicMethod.GET_WATCH_PLAYLIST: return self._ytmusic.get_watch_playlist(*args, **kwargs)
                 case YTMusicMethod.GET_STREAM_URL: return get_stream_url(*args, **kwargs)
+                case YTMusicMethod.GET_LYRICS: return self._ytmusic.get_lyrics(*args, **kwargs)
 
         except Exception as e:
             if "429" in str(e):  # Rate limited
@@ -150,6 +152,12 @@ class DataFetcherWorker(QThread):
 
     def add_request(self, method: YTMusicMethod, *args, priority: RequestPriority = RequestPriority.NORMAL, **kwargs) -> Optional[str]:
         """Add request with duplicate prevention"""
+        """Add request with duplicate prevention and it emit signal with data and request id
+
+        Returns:
+            str: request id of request
+            None: if request is wrong it return none
+        """
         try:
             request_id = str(uuid.uuid4())
             content_hash = hash((method, args, frozenset(kwargs.items())))

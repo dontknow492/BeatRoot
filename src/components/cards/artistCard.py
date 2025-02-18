@@ -120,7 +120,6 @@ class ArtistCard(CardWidget):
 
         
 if(__name__ == '__main__'):
-    
     app = QApplication(sys.argv)
     frame = QFrame()
     w = 0 

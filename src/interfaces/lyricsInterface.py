@@ -7,10 +7,15 @@ from qfluentwidgets import Theme, setTheme, setCustomStyleSheet
 import sys
 sys.path.append(r'D:\Program\Musify')
 
+import random
+
 from src.common.myScroll import SideScrollWidget, HorizontalScrollWidget, VerticalScrollWidget
 from src.common.myFrame import VerticalFrame, HorizontalFrame, FlowFrame
 from src.utility.enums import PlaceHolder
 from src.utility.image_utility import blur_pixmap
+from src.api.data_fetcher import YTMusicMethod, DataFetcherWorker
+from src.animation.skeleton_screen_animation import RectSkeletonScreen
+from src.utility.misc import is_online_song
 
 
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy, QStackedWidget
@@ -20,12 +25,14 @@ from PySide6.QtWidgets import QGraphicsDropShadowEffect, QTextBrowser, QGraphics
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsScene, QGraphicsBlurEffect, QGraphicsPixmapItem
 import json
 
+from loguru import logger
+
 class LyricsInterface(VerticalFrame):
-    def __init__(self, title: str = "Unknown", artist: str = "Unknown", parent = None):
+    def __init__(self, datafetcher: DataFetcherWorker, parent = None):
         super().__init__(parent)
-        self.title = title
-        self.artist = artist
-        self.zoomFactor = 0
+        self.datafetcher = datafetcher
+        self.title = "Unknown"
+        self.artist = "Unknown"
         
         self.original_pixmap = None  # Cache the original image
         self.blurred_pixmap = None  # Cache the blurred image
@@ -42,11 +49,36 @@ class LyricsInterface(VerticalFrame):
         
 
     def init_ui(self):
-        # Create a QTextBrowser
+        # Create ui
+        self.titleLabel = LargeTitleLabel(self.title, self)
+        title_font = QFont()
+        title_font.setPointSize(40)
+        title_font.setWeight(QFont.DemiBold)
+        self.titleLabel.setFont(title_font)
+        self.titleLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        
+        self.artistLabel = TitleLabel(self.artist, self)
+        author_font = QFont()
+        # author_font.setItalic(True)
+        author_font.setPointSize(28)
+        author_font.setWeight(QFont.DemiBold)
+        self.artistLabel.setFont(author_font)
+        self.artistLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.noLyricsLabel = BodyLabel("No Lyrics Found", self)
+        self.noLyricsLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.noLyricsLabel.setFont(QFont("Segoe UI", 20))
+        self.noLyricsLabel.setStyleSheet("color: gray")
+        image = FluentIcon.MUSIC.icon(color=QColor("gray")).pixmap(64, 64)
+        self.noLyricsImage = ImageLabel(image, self)
+        
+        
         self.text_browser = TextBrowser(self)
         self.text_browser.setFocusPolicy(Qt.NoFocus)
         self.text_browser.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.text_browser.setFrameShape(QTextBrowser.NoFrame)
+        text_font = QFont()
+        text_font.setPointSize(32)
+        self.text_browser.setFont(text_font)
         qss = """
             TextBrowser {
                 background-color: transparent;
@@ -57,27 +89,56 @@ class LyricsInterface(VerticalFrame):
             }
         """
         setCustomStyleSheet(self.text_browser, qss, qss)
-        # self.text_browser.verticalScrollBar().hide()
-        # self.text_browser.setZoomFactor(1.0)
         
-
-        # Set the initial title, author, and lyrics (empty)
-        # self.update_lyrics("Ajab Si", "Song Author", "")
-
-        # Layout setup
+        self._init_loading_frame()
+        spacer = QSpacerItem(0, 0, QSizePolicy.Minimum, QSizePolicy.Expanding)
         
-        self.addWidget(self.text_browser)
+        
+        self.addWidget(self.titleLabel, 0, alignment= Qt.AlignmentFlag.AlignTop)
+        self.addWidget(self.artistLabel, 0,alignment= Qt.AlignmentFlag.AlignTop)
+        
+        self.addWidget(self.loading_animation, alignment= Qt.AlignmentFlag.AlignHCenter)
+        
+        self.addWidget(self.noLyricsImage, 1, alignment= Qt.AlignmentFlag.AlignCenter)
+        self.addWidget(self.noLyricsLabel, 3, alignment= Qt.AlignmentFlag.AlignTop)
+        
+        self.addWidget(self.text_browser, stretch=10)
+        self.addSpacerItem(spacer)
 
         # Window settings
         self.setWindowTitle("Dynamic Song Lyrics")
-        self.resize(400, 300)
+        # self.resize(400, 300)
         
-    # def setBackgroundImage(self, image_path):
-    #     """Set the background image of the widget."""
-    #     # Load the image and cache it
-    #     self.original_pixmap = QPixmap(image_path)
-    #     self.update_background()
+    def _init_loading_frame(self):
+        self.loading_animation = VerticalFrame()
+        self.loading_animation.setContentSpacing(0)
+        for _ in range(4):
+            line = HorizontalFrame(self.loading_animation)
+            line.setContentSpacing(6)
+            for _ in range(4):
+                width = random.randint(50, 100)
+                animation = RectSkeletonScreen(width, 20)
+                # animation.setFixedSize(width, 20)
+                line.addWidget(animation)
+            self.loading_animation.addWidget(line)
+            
+    def start_animation(self):
+        for child in self.loading_animation.children():
+            if isinstance(child, HorizontalFrame):
+                for animation in child.children():
+                    if isinstance(animation, RectSkeletonScreen):
+                        animation.start_animation()
 
+    def stop_animation(self):
+        for child in self.loading_animation.children():
+            if isinstance(child, HorizontalFrame):
+                for animation in child.children():
+                    if isinstance(animation, RectSkeletonScreen):
+                        animation.stop_animation()
+
+    def set_blur_radius(self, radius):
+        self.blur_radius = radius
+        
     def setBackgroundImage(self, image_path):
         """Set the background image of the widget."""
         # Load the image and cache it
@@ -118,70 +179,61 @@ class LyricsInterface(VerticalFrame):
         # Apply the CSS to the widget
         self.setStyleSheet(css)
 
-    def update_lyrics(self, title, author, lyrics):
+    def fetch_song_lyrics(self, video_id: str):
+        if not is_online_song(video_id):
+            self.noLyricsSetup()
+            return None  # No lyrics available
+        self.set_loading(True)
+        logger.info(f"Fetching lyrics for video id: {video_id}")
+        self.datafetcher.data_fetched.connect(self._on_watch_fetched)
+        self.watch_request_id = self.datafetcher.add_request(YTMusicMethod.GET_WATCH_PLAYLIST, video_id)
+    
+    def _on_watch_fetched(self,  watch_list, request_id):
+        if request_id != self.watch_request_id:
+            return
+        if watch_list is None:
+            return
+        logger.info("Watch list fetched")
+        lyrics_id = watch_list.get("lyrics")
+        track_1 = watch_list.get("tracks")[0]
+        logger.debug(track_1)
+        title = track_1.get("title")
+        artist = track_1.get("artists")[0].get("name")
+        self.set_title(title)
+        self.set_author(artist)
+        if not lyrics_id:
+            self.noLyricsSetup()
+            self.info_msg_handler.warning_msg("No lyrics", "No lyrics available")
+            return None  # No lyrics available
+        self.lyrics_request_id = self.datafetcher.add_request(YTMusicMethod.GET_LYRICS, lyrics_id)
+        self.datafetcher.data_fetched.connect(self._on_lyrics_fetched)
+        
+    def _on_lyrics_fetched(self, lyrics_data, request_id):
+        if request_id != self.lyrics_request_id:
+            return
+        if lyrics_data is None:
+            logger.warning("No lyrics available")
+            return None  # No lyrics available
+        logger.success("Lyrics fetched")
+        
+        self.update_lyrics(lyrics_data.get("lyrics"))
+    
+    def update_lyrics(self, lyrics):
         """Update the title, author, and lyrics with proper formatting."""
         # Create a QTextCursor
-        self.title = title
-        self.artist = author
         self.lyrics = lyrics
-            
-        cursor = self.text_browser.textCursor()
-
-        # Clear the text in QTextBrowser first
-        cursor.select(QTextCursor.Document)
-        cursor.removeSelectedText()
-
-        # Set title format (bold, large font size)
-        title_format = QTextCharFormat()
-        title_font = QFont()
-        title_font.setPointSize(40)
-        title_font.setWeight(QFont.DemiBold)
-        title_format.setFont(title_font)
-
-        # Set author format (italic, slightly smaller font)
-        author_format = QTextCharFormat()
-        author_font = QFont()
-        # author_font.setItalic(True)
-        author_font.setPointSize(28)
-        author_font.setWeight(QFont.DemiBold)
-        author_format.setFont(author_font)
-
-        # Set lyrics format (normal weight, regular font size)
-        lyrics_format = QTextCharFormat()
-        lyrics_font = QFont()
-        lyrics_font.setLetterSpacing(QFont.PercentageSpacing, 120) 
-        lyrics_point_size =  24 + int(20 * self.zoomFactor)
-        lyrics_pixel_size = 32+  int(27 * self.zoomFactor)
-        print(f"lyrics_point_size: {lyrics_point_size}, lyrics_pixel_size: {lyrics_pixel_size}, self.zoomFactor: {self.zoomFactor}")
-        lyrics_font.setPointSize(lyrics_point_size)
-        lyrics_font.setPixelSize(lyrics_pixel_size)
-        lyrics_format.setFont(lyrics_font)
-        
-
-        # Insert title
-        cursor.setCharFormat(title_format)
-        cursor.insertText(title + "\n")
-
-        # Insert author
-        cursor.setCharFormat(author_format)
-        cursor.insertText("By: " + author + "\n")
-
-        # Insert lyrics
-        cursor.setCharFormat(lyrics_format)
-        cursor.insertText(lyrics)
-        # Set the updated cursor back into QTextBrowser
-        self.text_browser.setTextCursor(cursor)
+        """Update the QTextBrowser text and align it to the center."""
+        centered_lyrics = f'<div align="center">{self.lyrics.replace("\n", "<br>")}</div>'
+        self.text_browser.setText(centered_lyrics)
         self.text_browser.verticalScrollBar().setValue(0)
         
         if hasattr(self, 'titleLabel'):
-            self.titleLabel.setText(title)
-            self.artistLabel.setText(author)
-            self.titleLabel.hide()
-            self.artistLabel.hide()
             self.noLyricsLabel.hide()
             self.text_browser.show()
             self.noLyricsImage.hide()
             self.zoomContainer.show()
+            self.stop_animation()
+            self.loading_animation.hide()
             
         self.zoomContainer.raise_()
         self.zoomContainer.raise_()
@@ -189,8 +241,29 @@ class LyricsInterface(VerticalFrame):
         
     def set_lyrics(self,title, artist, lyrics):
         """Set the lyrics directly."""
-        self.update_lyrics(title, artist, lyrics)
+        self.update_lyrics(lyrics)
+        self.set_title(title)
+        self.set_author(artist)
+        
+    def set_title(self, title: str):
+        if not title and title != "":
+            title = "Unknown"
+        self.title = title
+        self.titleLabel.setText(title)
     
+    def set_author(self, author):
+        if not author and author != "":
+            author = "Unknown"
+        self.artist = author
+        self.artistLabel.setText(f"By: {author}")
+        
+    def increase_font_size(self, increment=2):
+        """Increase the font size of the QTextBrowser dynamically."""
+        current_font = self.text_browser.font()
+        new_size = current_font.pointSize() + increment  # Increase font size
+        current_font.setPointSize(new_size)
+        self.text_browser.setFont(current_font)  # Apply new font size
+
     def overlayZoom(self):
         self.zoomContainer = HorizontalFrame(self)
         # self.zoomContainer.raise_()
@@ -215,14 +288,29 @@ class LyricsInterface(VerticalFrame):
         self.zoomContainer.setGraphicsEffect(opacity_effect)
         
     def on_zoom(self, zoom_factor):
-        self.zoomFactor = self.zoomFactor + zoom_factor
-        percent = int(100 + self.zoomFactor * 100)
-        if percent> 0:
-            self.update_lyrics(self.title, self.artist, self.lyrics)
-            self.zoomLabel.setText(f"{percent}%")
-        else:
-            self.zoomFactor = self.zoomFactor - zoom_factor
+        """Adjust the font size dynamically based on zoom_factor."""
+        logger.info(f"Zoom factor: {zoom_factor}")
         
+        text = self.zoomLabel.text()
+        text = text.replace("%", "")
+        value = int(text)
+        value = value + int(100 * zoom_factor)
+        
+        if value < 10 and zoom_factor < 0:
+            return
+        self.adjust_font_size(zoom_factor)
+        self.zoomLabel.setText(f"{value}%")
+            
+    def adjust_font_size(self, zoom_factor):
+        change = 1 if zoom_factor>0 else -1
+        logger.info(f"Adjusting font size by {zoom_factor}")
+        current_font = self.text_browser.font()
+        new_size = current_font.pointSize() + change  # Prevent too small fonts
+        logger.info(f"Previous font Size: {current_font.pointSize()}")
+        logger.info(f"New font size: {new_size}")
+        current_font.setPointSize(new_size)
+        self.text_browser.setFont(current_font)
+
     def resizeEvent(self, event):
         self.zoomContainer.move(self.width() - self.zoomContainer.width() - 20, self.height() - self.zoomContainer.height() - 20)
         self.resize_timer.start(100)
@@ -237,34 +325,43 @@ class LyricsInterface(VerticalFrame):
             self.text_browser.hide()
         if hasattr(self, "zoomContainer"):
             self.zoomContainer.hide()
-        self.titleLabel = LargeTitleLabel(self.title, self)
-        self.titleLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.artistLabel = TitleLabel(self.artist, self)
-        self.artistLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.noLyricsLabel = BodyLabel("No Lyrics Found", self)
-        self.noLyricsLabel.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        self.noLyricsLabel.setFont(QFont("Segoe UI", 20))
-        self.noLyricsLabel.setStyleSheet("color: gray")
-        image = FluentIcon.MUSIC.icon(color=QColor("gray")).pixmap(64, 64)
-        self.noLyricsImage = ImageLabel(image, self)
         
-        self.addWidget(self.titleLabel, 0, alignment= Qt.AlignmentFlag.AlignTop)
-        self.addWidget(self.artistLabel, 0,alignment= Qt.AlignmentFlag.AlignTop)
-        self.addWidget(self.noLyricsImage, 1, alignment= Qt.AlignmentFlag.AlignCenter)
-        self.addWidget(self.noLyricsLabel, 3, alignment= Qt.AlignmentFlag.AlignTop)
+        if hasattr(self, "loading_animation"):
+            self.stop_animation() 
+            self.loading_animation.hide()  
+        self.noLyricsImage.show()
+        self.noLyricsLabel.show() 
         
-
+    def set_loading(self, state: bool):
+        if state:
+            self.start_animation()
+            self.loading_animation.show()
+            # self.text_browser.hide()
+            self.noLyricsImage.hide()
+            self.noLyricsLabel.hide()
+        else:
+            self.stop_animation()
+            self.loading_animation.hide()
+            self.text_browser.show()
+        
+    def reset_lyrics_interface(self):
+        self.set_title("")
+        self.set_author("")
+        self.text_browser.setText("")
+        self.noLyricsSetup()  
+        
 if(__name__ == "__main__"):
     app = QApplication(sys.argv)
     setTheme(Theme.DARK)
-    w = LyricsInterface()
-    w.showFullScreen()
+    datafetcher = DataFetcherWorker()
+    datafetcher.start()
+    w = LyricsInterface(datafetcher)
+    w.show()
     # w.setBackgroundImage(r"D:\Downloads\Images\Desktop-blurry-wallpaper.jpg")
     title = "Ajab Si"
     author = "Vishal-Skehar, KK"
     lyrics = (
-        """
-Aankhon mein teri
+        """Aankhon mein teri
 Ajab si ajab si adayein hai
 hoo Aankhon mein teri
 Ajab si ajab si adayein hai
@@ -305,10 +402,8 @@ Tere saath saath aisa
         """
     )
     # print(lyrics)  
-    # w.zoomContainer.show()
-    # w.zoomContainer.raise_()
-    # w.zoomContainer.raise_()
-    w.set_lyrics("Dil Lga Liya", "Sameer", lyrics)  
-    # w.update_lyrics(title, author, lyrics)
+    # w.set_lyrics("Dil Lga Liya", "Sameer", lyrics)  
+    w.fetch_song_lyrics("tfvwos6d-qw12")
+    w.setBackgroundImage(r"D:\Program\Musify\.cache\thumbnail\song\_eZnQzneuKs.png")
     app.exec()
     

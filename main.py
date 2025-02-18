@@ -15,6 +15,7 @@ from src.utility.check_net_connectivity import is_connected_to_internet
 from src.utility.database_utility import DatabaseManager
 from src.utility.misc import is_online_song
 from src.common.infoBarMsg import InfoTime
+from src.utility.enums import ImageFolder
 
 
 from src.interfaces import (AlbumInterface, PlaylistInterface, ArtistInterface, DownloadInterface,
@@ -279,7 +280,7 @@ class MainWindow(FluentWindow):
         self.searchInterface = SearchInterface(self)
         self.searchResultInterface = SearchResultInterface(self.datafetcher, self)
         # self.searchResultInterface.setMaximumHeight(500)
-        self.lyricsInterface = LyricsInterface(parent=self)
+        self.lyricsInterface = LyricsInterface(self.datafetcher, parent=self)
         
         #library interface and playlists
         self.libraryInterface = PlaylistInterface(self.database_manager, self)
@@ -427,12 +428,35 @@ class MainWindow(FluentWindow):
     async def _load_last_played(self):
         logger.info("Loading last played song")
         result = await self.database_manager.get_recent_songs()
-        self.bottomPlayer.set_song(result)
+        self.set_player_track(result)
         logger.info(f"Result: {result}")
         
     def _load_last_queue(self):
         logger.info("Loading last played Queue")
         self.queue.load_from_database()
+        
+    def set_player_track(self, track_data):
+        title = track_data.get("title")
+        artist = track_data.get("artists")
+        if isinstance(artist, list):
+            str_artist = ", ".join([artist.get("name") for artist in artist])
+        elif isinstance(artist, str):
+            str_artist = artist
+        self.lyricsInterface.set_title(title)
+        self.lyricsInterface.set_author(str_artist)
+        
+        cover = f"{ImageFolder.SONG.path}\\{track_data.get('videoId')}.png"
+        # self.lyricsInterface.setBackgroundImage()
+        QTimer.singleShot(1000, lambda: self.lyricsInterface.setBackgroundImage(cover))
+        self.lyricsInterface.start_animation()
+        self.bottomPlayer.set_song(track_data)
+        
+    def set_queue_data(self, id_: str, tracks: dict, selected_idx: int = 0):
+        self.queue.setQueueData(id_, tracks, selected_idx)
+        
+    def on_queue_song_change(self, song_data):
+        logger.info("queue song change")
+        self.set_player_track(song_data)
         
     def on_audioCardClicked(self, track_data, index: int = 0):
         track_id  =  track_data.get('videoId')
@@ -446,25 +470,19 @@ class MainWindow(FluentWindow):
             logger.info("Playing playlist")
             self.info_msg_handler.success_msg("Loading playlist", "Loading playlist to queue")
             logger.debug(f"id: {id_}")
-            self.queue.setQueueData(id_, sender_widget.get_tracks())
+            self.set_queue_data(id_, sender_widget.get_tracks())
         if isinstance(sender_widget, LocalView):
             id_ = sender_widget.get_id()
             logger.info("Playling playlist")
             self.info_msg_handler.success_msg("Loading playlist", "Loading playlist to queue")
-            self.queue.setQueueData(id_, sender_widget.get_tracks(), index)
-            self.bottomPlayer.set_song(track_data)
+            self.set_queue_data(id_, sender_widget.get_tracks(), index)
+            self.set_player_track(track_data)
     
-    def on_playlist_play(self, playlist_id):
-        pass
-    
-    def on_queue_song_change(self, song_data):
-        logger.info("queue song change")
-        self.bottomPlayer.set_song(song_data)
     
     @asyncSlot()
     async def play_track(self, audio_data: dict, fetch_watch_playlist: bool = True):
         logger.info("play track")
-        self.bottomPlayer.set_song(audio_data)
+        self.set_player_track(audio_data)
         track_id = audio_data.get('videoId')
         is_local = not is_online_song(track_id)
         def watch_playlist_fetched(data, uid):
@@ -564,7 +582,7 @@ class MainWindow(FluentWindow):
         asyncio.create_task(self.database_manager.insert_liked_album(album_data.get("id")))
         
     def set_queue(self, qid: str, tracks: list, selected: int):
-        self.queue.setQueueData(qid, tracks, selected)
+        self.set_queue_data(qid, tracks, selected)
         
     def add_to_playlist(self, audio_id):
         logger.info("add to playlist")
@@ -592,7 +610,7 @@ class MainWindow(FluentWindow):
             self.info_msg_handler.warning_msg("No song", "No next song in queue")
             logger.warning("No next song in queue")
             return
-        self.bottomPlayer.set_song(song_data)  
+        self.set_player_track(song_data)  
         
     def on_prev_clicked(self):
         logger.info("prev clicked")
@@ -601,7 +619,7 @@ class MainWindow(FluentWindow):
             self.info_msg_handler.warning_msg("No song", "No previous song in queue")
             logger.warning("No previous song in queue")
             return
-        self.bottomPlayer.set_song(song_data)  
+        self.set_player_track(song_data)  
         
     def on_like_clicked(self):
         logger.info("like clicked")
