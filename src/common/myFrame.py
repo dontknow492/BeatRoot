@@ -145,6 +145,11 @@ class MyFrameBase(QFrame):
 
         self.mainLayout.update()  # Ensure layout updates properly
 
+    def count(self):
+        return self.mainLayout.count()
+
+    def itemAt(self, index):
+        return self.mainLayout.itemAt(index)
         
     def delete_widget(self, widget: QObject):
         if not widget or not hasattr(widget, "deleteLater"):

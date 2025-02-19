@@ -269,8 +269,8 @@ class MainWindow(FluentWindow):
         # connecting signals
         self.signal_handler = SignalHandler(self)
         
-        # self._load_last_played()
-        # self._load_last_queue()
+        self._load_last_played()
+        self._load_last_queue()
         
         
         
@@ -447,9 +447,11 @@ class MainWindow(FluentWindow):
         
         cover = f"{ImageFolder.SONG.path}\\{track_data.get('videoId')}.png"
         # self.lyricsInterface.setBackgroundImage()
-        QTimer.singleShot(1000, lambda: self.lyricsInterface.setBackgroundImage(cover))
+        self.lyricsInterface.clear_lyrics()
+        QTimer.singleShot(100, lambda: self.lyricsInterface.setBackgroundImage(cover))
         self.lyricsInterface.start_animation()
         self.bottomPlayer.set_song(track_data)
+        QTimer.singleShot(3000, lambda: self.lyricsInterface.fetch_song_lyrics(track_data.get('videoId')))
         
     def set_queue_data(self, id_: str, tracks: dict, selected_idx: int = 0):
         self.queue.setQueueData(id_, tracks, selected_idx)
@@ -457,6 +459,9 @@ class MainWindow(FluentWindow):
     def on_queue_song_change(self, song_data):
         logger.info("queue song change")
         self.set_player_track(song_data)
+        
+    def on_download(self, video_id, title):
+        self.downloadsInterface.add_download(video_id, title)
         
     def on_audioCardClicked(self, track_data, index: int = 0):
         track_id  =  track_data.get('videoId')
@@ -476,7 +481,7 @@ class MainWindow(FluentWindow):
             logger.info("Playling playlist")
             self.info_msg_handler.success_msg("Loading playlist", "Loading playlist to queue")
             self.set_queue_data(id_, sender_widget.get_tracks(), index)
-            self.set_player_track(track_data)
+        self.set_player_track(track_data)
     
     
     @asyncSlot()
@@ -745,7 +750,7 @@ class SignalHandler(QObject):
         player.queuesClicked.connect(self.ui.on_queue_clicked)
         player.likedSignal.connect(self.ui.track_liked_id)
         player.unlikeSignal.connect(self.ui.track_unliked_id)
-        player.downloadClicked.connect(self.ui.on_download_clicked)
+        player.downloadClicked.connect(self.ui.on_download)
 
     def _queue_signals(self):
         self.ui.queue.audioCardClicked.connect(lambda song_data: self.ui.bottomPlayer.set_song(song_data))

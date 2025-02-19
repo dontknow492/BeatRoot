@@ -27,7 +27,7 @@ class DownloadInterface(LibraryInterfaceBase):
         self.setObjectName("downloadInterface")
         
         self.song_downloader = SongDownloader(self)
-        # self.song_downloader.start()
+        self.song_downloader.start()
         self.download_dict = dict() #consist of request id, card
         #overideing
         self.scrollArea.deleteLater()
@@ -108,7 +108,7 @@ class DownloadInterface(LibraryInterfaceBase):
         if video_id is None:
             logger.error("videoId is None")
             return
-        cover_path = f"{ImageFolder.PLACEHOLDER.path}/{video_id}.png"
+        cover_path = f"{ImageFolder.SONG.path}/{video_id}.png"
         card = DownloadCard()
         card.setObjectName(f"{video_id}_card")
         card.set_title(title)

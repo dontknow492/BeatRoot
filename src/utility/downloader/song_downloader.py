@@ -14,132 +14,116 @@ import os
 import uuid
 import logging
 from queue import Queue, Empty
-from PySide6.QtCore import QObject, QThread, Signal, QMutex, QWaitCondition, QMutexLocker
+from PySide6.QtCore import QObject, QThread, Signal, QMutex, QWaitCondition, QMutexLocker, QTimer
 import yt_dlp as youtube_dlp
 from loguru import logger
 
 
+import os
+import yt_dlp
+import logging
+from PySide6.QtCore import QObject, Signal, Slot
+
+import uuid
+import xxhash
+from PySide6.QtCore import QObject, Signal, QThread, QTimer
+
+logger = logging.getLogger(__name__)
+
 class DownloadWorker(QObject):
-    progress_updated = Signal(str, float, float)  #  request_id, progress_percent, total size
-    error_occurred = Signal(str, str)    # error_message, request_id
-    download_finished = Signal(str)      # request_id
-    removed = Signal(str)                # removed request_id
+    progress_updated = Signal(str, float, float)  # request_id, progress_percent, total size
+    error_occurred = Signal(str, str)  # error_message, request_id
+    download_finished = Signal(str)  # request_id
 
     def __init__(self, rate_limit=50000):
         super().__init__()
-        self.download_queue = Queue()
-        self.download_urls = set()
-        self.removed_urls = set()
-        self.lock = QMutex()  # Single lock to avoid deadlocks
-        self.condition = QWaitCondition()
-        self.current_request_id = None
-        self.running = False
-        self.cancel_current = False
-        self.rate_limit = rate_limit  # Rate limit in bytes per second
+        self.download_url = None
+        self.request_id = None
+        self.download_dir = None
+        self.is_downloading = False
+        self.rate_limit = rate_limit
+        self.cancel_current = False  # Initialize properly
 
     @Slot()
     def run(self):
-        self.running = True
-        while self.running:
-            try:
-                item = self.download_queue.get(timeout=0.5)
-                request_id, video_url, download_dir = item
-                
-                with QMutexLocker(self.lock):
-                    if video_url in self.removed_urls:
-                        logger.info(f"Skipping removed download: {video_url} (ID: {request_id})")
-                        self.download_queue.task_done()
-                        continue
-                
-                self.current_request_id = request_id
-                self.cancel_current = False  # Reset before each download
-                logger.info(f"Starting download: {video_url} (ID: {request_id})")
-                self.start_download(request_id, video_url, download_dir)
-                self.download_queue.task_done()
-            except Empty:
-                continue
-            except Exception as e:
-                logger.error(f"Unexpected error: {str(e)}")
-                self.error_occurred.emit(str(e), "unknown")
+        try:
+            if not self.download_url:
+                return
+            logger.info(f"Starting download: {self.download_url} (ID: {self.request_id})")
+            self.start_download()
+        except Exception as e:
+            logger.error(f"Unexpected error: {str(e)}")
+            self.error_occurred.emit(str(e), self.request_id or "unknown")
         
         logger.debug("Worker thread stopping")
-        
-    @logger.catch
-    def start_download(self, request_id, video_url, download_dir):
+
+    def start_download(self):
         try:
-            os.makedirs(download_dir, exist_ok=True)
+            os.makedirs(self.download_dir, exist_ok=True)
             ydl_opts = {
                 "format": "bestaudio/best",
-                "outtmpl": f"{download_dir}/%(title)s.%(ext)s",
-                "progress_hooks": [lambda d: self.progress_hook(d, request_id)],
+                "outtmpl": f"{self.download_dir}/%(title)s.%(ext)s",
+                "progress_hooks": [self.progress_hook],
                 "retries": 3,
                 "ratelimit": self.rate_limit,
             }
 
             with youtube_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([video_url])
-            
-            self.download_finished.emit(request_id)
-            logger.info(f"Download completed: {video_url} (ID: {request_id})")
-        except youtube_dlp.DownloadCancelled:
-            logger.warning(f"Download cancelled: {video_url} (ID: {request_id})")
-        except Exception as e:
-            logger.error(f"Download failed: {str(e)} (ID: {request_id})")
-            self.error_occurred.emit(str(e), request_id)
-        finally:
-            with QMutexLocker(self.lock):
-                self.download_urls.discard(video_url)
-                self.removed_urls.discard(video_url)
-            self.current_request_id = None
+                self.is_downloading = True
+                ydl.download([self.download_url])
 
-    def progress_hook(self, data, request_id):
+            self.is_downloading = False
+            self.download_finished.emit(self.request_id)
+            logger.info(f"Download completed: {self.download_url} (ID: {self.request_id})")
+        except youtube_dlp.utils.DownloadCancelled:
+            logger.warning(f"Download cancelled: {self.download_url} (ID: {self.request_id})")
+        except Exception as e:
+            logger.error(f"Download failed: {str(e)} (ID: {self.request_id})")
+            self.error_occurred.emit(str(e), self.request_id)
+        finally:
+            self.is_downloading = False
+
+    def progress_hook(self, data):
         if self.cancel_current:
-            raise youtube_dlp.DownloadCancelled("Download cancelled by user")
-        
+            self.is_downloading = False
+            raise youtube_dlp.utils.DownloadCancelled("Download cancelled by user")
+
         if data.get("status") == "downloading":
             downloaded = data.get("downloaded_bytes", 0)
             total = data.get("total_bytes") or data.get("total_bytes_estimate", 0)
             if total > 0:
                 progress = (downloaded / total * 100)
-                self.progress_updated.emit(request_id, progress, total)
+                self.progress_updated.emit(self.request_id, progress, total)
 
-    def add_request(self, video_url, download_dir="."):
-        with QMutexLocker(self.lock):
-            if video_url in self.download_urls:
-                logger.warning(f"URL already in queue: {video_url}")
-                return None
-
-            request_id = str(uuid.uuid4())
-            self.download_urls.add(video_url)
-            self.download_queue.put((request_id, video_url, download_dir))
-            self.condition.wakeAll()
-            logger.info(f"Added to queue: {video_url} (ID: {request_id})")
-            return request_id
+    def add_download(self, video_url, request_id: str, download_dir="."):
+        """Initialize and start a new download."""
+        self.download_url = video_url  # Fixed variable reference
+        self.request_id = request_id
+        self.download_dir = download_dir
+        self.cancel_current = False
+        # self.run()
 
     @Slot()
-    def stop(self):
-        self.running = False
+    def stop_download(self):
+        """Stop the current download."""
         self.cancel_current = True
-        self.condition.wakeAll()  # Wake up any waiting thread
         logger.debug("Stop signal received")
 
-    @Slot()    
-    def remove_download(self, video_url):
-        with QMutexLocker(self.lock):
-            if video_url in self.download_urls:
-                self.removed_urls.add(video_url)
-                logger.info(f"Marked for removal: {video_url}")
-            else:
-                logger.warning(f"Tried to remove non-queued URL: {video_url}")
-        self.removed.emit(video_url)
-
+    def get_current_request_id(self):
+        """Return the current request ID."""
+        return self.request_id
+    
+    def isDownloading(self):
+        """Check if a download is currently in progress."""
+        return self.is_downloading
 
 class SongDownloader(QObject):
-    download_progress_signal = Signal(str, float, float)  # progress_percent, request_id
-    download_error_signal = Signal(str, str)    # error_message, request_id
-    download_complete_signal = Signal(str)      # request_id
+    download_progress_signal = Signal(str, float, float)  # request_id, progress, total size
+    download_error_signal = Signal(str, str)  # request_id, error message
+    download_complete_signal = Signal(str)  # request_id
+
     def __init__(self, parent=None):
-        super().__init__(parent = parent)
+        super().__init__(parent)
         self.thread = QThread()
         self.worker = DownloadWorker()
         self.worker.moveToThread(self.thread)
@@ -150,31 +134,72 @@ class SongDownloader(QObject):
         self.worker.error_occurred.connect(self._handle_error)
         self.worker.progress_updated.connect(self._handle_progress)
 
-        # self.thread.start()
-        
+        self.requests = {}  # Dictionary to hold queued downloads
+
     def start(self):
+        """Start the downloader thread."""
         self.thread.start()
 
-    def _handle_progress(self, request_id: str, progress: float, total_size: float ):
-        # logger.debug(f"Progress for {request_id}: {progress}%")
+    def _handle_progress(self, request_id: str, progress: float, total_size: float):
+        """Emit progress update signal."""
         self.download_progress_signal.emit(request_id, progress, total_size)
 
     def _handle_error(self, message, request_id):
-        # logger.error(f"Error for {request_id}: {message}")
+        """Emit error signal."""
         self.download_error_signal.emit(request_id, message)
 
     def _handle_finished(self, request_id):
-        # logger.info(f"Download finished for {request_id}")
+        """Handle completion of a download."""
+        self.requests.pop(request_id, None)
         self.download_complete_signal.emit(request_id)
 
+        if not self.worker.isDownloading():
+            self._start_next_download()
+
+    def _start_next_download(self):
+        """Start the next download in the queue."""
+        if self.requests:
+            request_id, (video_url, download_dir) = next(iter(self.requests.items()))
+            self.worker.add_download(video_url, request_id, download_dir)
+            QTimer.singleShot(1000, self.worker.run)
+
     def add_request(self, video_url, download_dir="."):
-        return self.worker.add_request(video_url, download_dir)
+        """Add a new download request."""
+        request_id = self.generate_request_id(video_url)
+        self.requests[request_id] = (video_url, download_dir)
+
+        if not self.worker.isDownloading():
+            self.worker.add_download(video_url, request_id, download_dir)
+            QTimer.singleShot(1000, self.worker.run)
+            # self.worker.run()
+
+        return request_id
+    
+    def generate_request_id(self, video_url):
+        """Generate a unique request ID based on the video URL."""
+        return xxhash.xxh128_hexdigest(video_url)
+
+    def pause_request(self, request_id):
+        """Pause a specific request and move it to the end of the queue."""
+        if request_id == self.worker.request_id:
+            self.worker.stop_download()
+            data = self.requests.pop(request_id, None)
+            if data:
+                self.requests[request_id] = data  # Move to the end of the queue
+            self._start_next_download()
+
+    def cancel_request(self, request_id):
+        """Cancel a specific request."""
+        if request_id == self.worker.request_id:
+            self.worker.stop_download()
+        self.requests.pop(request_id, None)
 
     def shutdown(self):
-        self.worker.stop()
+        """Shutdown the downloader gracefully."""
+        self.worker.stop_download()
         self.thread.quit()
         self.thread.wait()
-        logger.info("Downloader shutdown complete")
+
         
         
         
@@ -195,18 +220,21 @@ class DownloadCard(QWidget):
         layout.addWidget(self.progress_bar, stretch=1)
         layout.addWidget(cancel_button)
         
-    def update_progress(self, progress, request_id):
+    def update_progress(self, request_id, progress, total: str = None):
+        logger.debug(f"Updating progress: {progress} for {request_id}")
         if request_id == self.request_id:
-            self.progress_bar.setValue(progress)
+            self.progress_bar.setValue(int(progress))
+            
     def cancel_download(self):
         # Implement cancellation logic here
         logger.critical("clicked")
-        self.canceled.emit(self.video_url)
+        self.canceled.emit(self.request_id)
     
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.downloader = SongDownloader()
+        self.downloader.start()
         self.download_cards = []
 
         self.layout = QVBoxLayout(self)
@@ -222,14 +250,18 @@ class MainWindow(QWidget):
     def add_download(self, video_url):
         download_card = DownloadCard(video_url)
         self.layout.addWidget(download_card)
-        self.downloader.worker.progress_updated.connect(download_card.update_progress)
-        download_card.canceled.connect(lambda url: self.downloader.worker.remove_download(url))
+        self.downloader.download_progress_signal.connect(download_card.update_progress)
+        download_card.canceled.connect(lambda request: self.downloader.pause_request(request))
         download_card.request_id = self.downloader.add_request(video_url)
         # self.downloader.add_request(video_url)
         
         
 if(__name__ == "__main__"):
-    app = QApplication([])
-    window = MainWindow()
-    window.show()
-    app.exec()
+
+    video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    uid = xxhash.xxh128_hexdigest(video_url)
+    print(uid)
+    # app = QApplication([])
+    # window = MainWindow()
+    # window.show()
+    # app.exec()

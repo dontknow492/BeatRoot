@@ -143,12 +143,14 @@ class StatsInterface(VerticalScrollWidget):
         asyncio.create_task(self.database_manager.get_total_liked_songs(self.set_liked_count))
         asyncio.create_task(self.database_manager.get_total_playlist_played(self.set_playlists_count))
         
-    def _fetch_card_data(self, sql_interval: StatsFilter = StatsFilter.WEEK.sql_interval):
-        asyncio.create_task(self.database_manager.get_top_songs(sql_interval, callback=self.top_songs))
+    def _fetch_card_data(self, sql_interval: StatsFilter = StatsFilter.DAY.sql_interval):
+        # self.hide_all_cards()
+        asyncio.create_task(self.database_manager.get_top_songs(sql_interval, 10, callback=self.top_songs))
         asyncio.create_task(self.database_manager.get_top_artists(sql_interval, 10, self.top_artists))
         asyncio.create_task(self.database_manager.get_top_albums(sql_interval, 10, self.top_albums))
         
     async def top_songs(self, results):
+        self.hide_top_songs()
         for result in results:
             logger.debug(f"Top Song Result: {result}")
             song_id = result['id']
@@ -161,8 +163,10 @@ class StatsInterface(VerticalScrollWidget):
                 continue
             logger.debug(f"Song: {data}")
             self.add_song(data['videoId'], data['title'], is_online, result['play_count'], result['file_path'])
-        
+            
+    
     async def top_artists(self, results):
+        self.hide_top_artists()
         for result in results:
             logger.debug(f"Top Artists Result: {result}")
             data = await self.database_manager.get_artist_info(result['id'])
@@ -173,6 +177,7 @@ class StatsInterface(VerticalScrollWidget):
             
     
     async def top_albums(self, results):
+        self.hide_top_albums()
         for result in results:
             logger.debug(f"Top Album Result: {result}")
             data = await self.database_manager.get_album_info(result['id'])
@@ -180,11 +185,13 @@ class StatsInterface(VerticalScrollWidget):
                 continue
             logger.debug(f"Album: {data}")
             self.add_album(data[0], data[1], result['play_count'])
+            
     
     def add_song(self, song_id: str, title: str, is_online: bool, play_count: str, file_path: str = None):
         card = self.song_container.findChild(AudioStatsCard, f"{song_id}_card")
         if card:
             card.setRuns(play_count)
+            card.show()
             return
         path = f"{ImageFolder.SONG.path}\\{song_id}.png"
         card = AudioStatsCard(title, play_count, cover_path=path)
@@ -200,6 +207,7 @@ class StatsInterface(VerticalScrollWidget):
         card = self.artist_container.findChild(ArtistStatsCard, f"{artist_id}_card")
         if card:
             card.setRuns(play_count)
+            card.show()
             return
         path = f"{ImageFolder.ARTIST.path}\\{artist_id}.png"
         card = ArtistStatsCard(name, play_count, cover_path=path)
@@ -213,6 +221,7 @@ class StatsInterface(VerticalScrollWidget):
         card = self.album_container.findChild(AlbumStatsCard, f"{album_id}_card")
         if card:
             card.setRuns(play_count)
+            card.show()
             return
         path = f"{ImageFolder.ALBUM.path}\\{album_id}.png"
         card = AlbumStatsCard(title, play_count, cover_path=path)
@@ -220,6 +229,31 @@ class StatsInterface(VerticalScrollWidget):
         card.setObjectName(f"{album_id}_card")
         card.clicked.connect(lambda: self.albumClicked.emit(album_id))
         self.album_container.addWidget(card)
+        
+    def hide_top_songs(self):
+        for x in range(self.song_container.count()):
+            item = self.song_container.itemAt(x)
+            if item:
+                widget = item.widget()
+            if widget:
+                widget.hide()
+        
+    def hide_top_artists(self):
+            for x in range(self.artist_container.count()):
+                item = self.song_container.itemAt(x)
+                if item:
+                    widget = item.widget()
+                if widget:
+                    widget.hide()
+                
+    def hide_top_albums(self):
+            for x in range(self.album_container.count()):
+                item = self.album_container.itemAt(x)
+                if item:
+                    widget = item.widget()
+                if widget:
+                    widget.hide()
+        
     
         
     async def set_play_time(self, time: str | int):

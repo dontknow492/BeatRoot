@@ -55,16 +55,22 @@ class DatabaseManager(QObject):
             self.db = None
 
     async def fetch_song(self, song_id):
-        async with self.db.execute("SELECT (id, title, album_id, genre_id, duration) FROM songs WHERE id = ?", (song_id,)) as cursor:
-            data =  await cursor.fetchone()
-            song_data = {
-                'videoId': data[0],
-                'title': data[1],
-                'albumId': data[2],
-                'genreId': data[3],
-                'duration': data[3],
-            }
-            return song_data
+        if self.db is None:
+            await self._connect_db()
+        try:
+            async with self.db.execute("SELECT id, title, album_id, genre_id, duration FROM songs WHERE id = ?", (song_id,)) as cursor:
+                data =  await cursor.fetchone()
+                song_data = {
+                    'videoId': data[0],
+                    'title': data[1],
+                    'albumId': data[2],
+                    'genreId': data[3],
+                    'duration': data[4],
+                }
+                return song_data
+        except aiosqlite.Error as e:
+            logger.error(f"Database fetch song: '{song_id}' Error: {e}")
+            return None
         
 
     async def insert_artist(self, artist: Dict):
@@ -2443,8 +2449,10 @@ async def main():
     
     # print(await db.get_song("xBnc7zN3vLA"))
     # await db.insert_local_song(data)
-    for uid, directory in zip(ids, dirs):
-        await db.insert_local_directory(uid, directory)
+    data = await db.fetch_song("Lkq2Fic8rCY")
+    logger.debug(f"Data: {data}")
+    # for uid, directory in zip(ids, dirs):
+    #     await db.insert_local_directory(uid, directory)
         
 if __name__ == "__main__":
     # app = QApplication([])

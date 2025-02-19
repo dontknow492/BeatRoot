@@ -51,7 +51,7 @@ class PlayerInterface(PlayerScreen):
     shuffleClicked = Signal(bool)
     titleClicked = Signal()
     artistClicked = Signal()
-    downloadClicked = Signal()
+    downloadClicked = Signal(str, str) #videoId, title
     error = Signal(str)
     likedSignal = Signal(str)
     unlikeSignal = Signal(str)
@@ -126,6 +126,7 @@ class PlayerInterface(PlayerScreen):
         self.shuffleButton.toggled.connect(self.shuffleClicked.emit)
         self.titleLabel.clicked.connect(self.titleClicked.emit)
         self.authorLabel.clicked.connect(self.artistClicked.emit)
+        self.downloadButton.clicked.connect(self.on_download_clicked)
 
     def set_song(self, song_data: dict) -> None:
         """Set the current song by ID."""
@@ -384,7 +385,10 @@ class PlayerInterface(PlayerScreen):
             return
         await self.database_manager.insert_play_history(song_id, duration, file_path)
         
-    
+    def on_download_clicked(self):
+        if self.song_id is None:
+            return
+        self.downloadClicked.emit(self.song_id, self.titleLabel.text())
         
 if(__name__ == "__main__"):
     setTheme(Theme.DARK)

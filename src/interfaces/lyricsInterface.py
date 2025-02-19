@@ -26,6 +26,7 @@ from PySide6.QtWidgets import QGraphicsItem, QGraphicsScene, QGraphicsBlurEffect
 import json
 
 from loguru import logger
+from pathlib import Path
 
 class LyricsInterface(VerticalFrame):
     def __init__(self, datafetcher: DataFetcherWorker, parent = None):
@@ -86,6 +87,7 @@ class LyricsInterface(VerticalFrame):
                 }
             TextBrowser::hover {
                 background: transparent;
+                border: none;
             }
         """
         setCustomStyleSheet(self.text_browser, qss, qss)
@@ -139,9 +141,11 @@ class LyricsInterface(VerticalFrame):
     def set_blur_radius(self, radius):
         self.blur_radius = radius
         
-    def setBackgroundImage(self, image_path):
+    def setBackgroundImage(self, image_path: str):
         """Set the background image of the widget."""
         # Load the image and cache it
+        if image_path is None or  not Path(image_path).exists():
+            image_path = PlaceHolder.LYRICS.path
         self.original_pixmap = QPixmap(image_path)
 
         # Apply blur effect to the original image and cache the result
@@ -149,6 +153,8 @@ class LyricsInterface(VerticalFrame):
 
         # Update the background with the blurred image
         self.update_background()
+        self.update()
+        self.repaint()
 
     def update_background(self):
         """Update the background image based on the current widget size."""
@@ -184,6 +190,7 @@ class LyricsInterface(VerticalFrame):
             self.noLyricsSetup()
             return None  # No lyrics available
         self.set_loading(True)
+        self.clear_lyrics()
         logger.info(f"Fetching lyrics for video id: {video_id}")
         self.datafetcher.data_fetched.connect(self._on_watch_fetched)
         self.watch_request_id = self.datafetcher.add_request(YTMusicMethod.GET_WATCH_PLAYLIST, video_id)
@@ -203,7 +210,7 @@ class LyricsInterface(VerticalFrame):
         self.set_author(artist)
         if not lyrics_id:
             self.noLyricsSetup()
-            self.info_msg_handler.warning_msg("No lyrics", "No lyrics available")
+            logger.warning("No lyrics", "No lyrics available")
             return None  # No lyrics available
         self.lyrics_request_id = self.datafetcher.add_request(YTMusicMethod.GET_LYRICS, lyrics_id)
         self.datafetcher.data_fetched.connect(self._on_lyrics_fetched)
@@ -344,10 +351,13 @@ class LyricsInterface(VerticalFrame):
             self.loading_animation.hide()
             self.text_browser.show()
         
+    def clear_lyrics(self):
+        self.text_browser.setText("")
+    
     def reset_lyrics_interface(self):
         self.set_title("")
         self.set_author("")
-        self.text_browser.setText("")
+        self.clear_lyrics()
         self.noLyricsSetup()  
         
 if(__name__ == "__main__"):
