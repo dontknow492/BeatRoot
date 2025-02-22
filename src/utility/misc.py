@@ -10,7 +10,7 @@ def get_thumbnail_url(videoId):
 def get_audio_url(videoId):
     if len(videoId)>11:
         return None
-    return f"https://www.youtube.com/watch?v={videoId}"
+    return f"https://music.youtube.com/watch?v={videoId}"
 
 def is_valid_youtube_url(url: str) -> bool:
     """
@@ -27,8 +27,9 @@ def is_valid_youtube_url(url: str) -> bool:
         True if the URL is a valid YouTube URL, False otherwise.
     """
     youtube_regex = re.compile(
-        r"^(https?://)?(www\.)?(youtube\.com|youtu\.be)/"
+        r"^(https?://)?(music\.)?(youtube\.com|youtu\.be)/"
         r"(watch\?v=|embed/|v/|shorts/)?(?P<id>[a-zA-Z0-9_-]{11})"
+        # r"^(https?://)?(music\.)?(youtube\.com|youtu\.be)/"
     )
     match = youtube_regex.match(url)
     return bool(match)

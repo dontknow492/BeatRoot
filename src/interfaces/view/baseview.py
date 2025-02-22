@@ -26,6 +26,11 @@ class ViewInterface(QStackedWidget):
     albumClicked = Signal(str)
     artistClicked = Signal(str)
     deleteSignal = Signal(str)
+    downloadSong = Signal(str, str) #video_id, title
+    openSongInBrowser = Signal(str) #video_id
+    share = Signal(str) #video_id
+    likedSong = Signal(dict)
+    queueSong = Signal(dict)
     def __init__(self, data_fetcher: DataFetcherWorker, view_interface: ViewBase, database_manager:DatabaseManager, parent=None):
         super().__init__(parent = parent)
         self.setObjectName('ViewInterface')
@@ -61,6 +66,12 @@ class ViewInterface(QStackedWidget):
         self.view_interface.errorOccurred.connect(self.errorOccurred.emit)
         self.view_interface.play.connect(self.play.emit)
         self.view_interface.liked.connect(self.on_like)
+        #
+        self.view_interface.downloadSong.connect(self.downloadSong.emit)
+        self.view_interface.share.connect(self.share.emit)
+        self.view_interface.openSongInBrowser.connect(self.openSongInBrowser.emit)
+        self.view_interface.likedSong.connect(self.likedSong.emit)
+        self.view_interface.queueSong.connect(self.queueSong.emit)
         
     def fetch_view_data(self, data):
         raise NotImplementedError

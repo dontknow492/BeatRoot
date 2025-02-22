@@ -52,8 +52,13 @@ class ViewBase(VerticalScrollWidget):
     playlistCardClicked = Signal(str)
     errorOccurred = Signal(str)
     liked = Signal(bool)
+    likedSong = Signal(dict)
+    queueSong = Signal(dict)
     addedTo = Signal(bool)
     play = Signal(bool)
+    downloadSong = Signal(str, str) #video_id, title
+    openSongInBrowser = Signal(str) #video_id
+    share = Signal(str) #video_id
     def __init__(self, parent=None):
         super().__init__(title= None, parent= parent)
         
@@ -209,18 +214,23 @@ class ViewBase(VerticalScrollWidget):
         
     def create_audio_menu(self, card: AudioCard):
         menu = RoundMenu()
+        data = card.get_card_data()
+        title = card.getTitle()
+        song_id = card.getAudioId()
+        album_id = card.getAlbumId()
         menu.setCursor(Qt.CursorShape.PointingHandCursor)
         menu.addActions([
-            Action(FluentIcon.RIGHT_ARROW,"Add to queue"),
-            Action(FluentIcon.ADD_TO,"Add to playlist"),
-            Action(FluentIcon.HEART,"Add to favorites"),
-            Action(FluentIcon.ALBUM,"Go to album")
+            Action(FluentIcon.RIGHT_ARROW,"Add to queue", triggered=lambda: self.queueSong.emit(data)),
+            Action(FluentIcon.ADD_TO,"Add to playlist", triggered=lambda: self.addedTo.emit()),
+            Action(FluentIcon.HEART,"Add to favorites", triggered=lambda: self.likedSong.emit(data))
             ])
+        if album_id:
+            menu.addAction(Action(FluentIcon.ALBUM,"Go to album", triggered=lambda: self.albumClicked.emit(album_id)))
         menu.addSeparator()
         menu.addActions([
-            Action(FluentIcon.DOWNLOAD, "Download"),
-            Action(FluentIcon.GLOBE,"Open in Browser"),
-            Action(FluentIcon.SHARE,"Share")
+            Action(FluentIcon.DOWNLOAD, "Download", triggered=lambda: self.downloadSong.emit(song_id, title)),
+            Action(FluentIcon.GLOBE,"Open in Browser", triggered=lambda: self.openSongInBrowser.emit(song_id)),
+            Action(FluentIcon.SHARE,"Share", triggered=lambda: self.share.emit(song_id))
         ])
         card.setMenu(menu)
         

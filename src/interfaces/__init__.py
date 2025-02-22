@@ -10,3 +10,4 @@ from .genre import GenrePlaylistsInterface, AllGenreInterface  # Import the Genr
 from .view import PlaylistView, ArtistView, AlbumView, AudioView, ViewInterface
 from .noInternetInterface import NoInternetWindow
 from .music_queue import MusicQueue
+from .settingInterface import SettingInterface

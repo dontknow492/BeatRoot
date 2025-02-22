@@ -29,12 +29,15 @@ class DownloadStatus(Enum):
 
 class DownloadCard(SimpleCardWidget):
     deleteSignal = Signal()
+    startSignal = Signal()
+    pauseSignal = Signal()
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setObjectName("downloadCard")
         # self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.cover_art = PlaceHolder.SONG.path
         self.download_status = DownloadStatus.READY
+        self.request_id = None
         self.initUi()
         
         
@@ -117,8 +120,10 @@ class DownloadCard(SimpleCardWidget):
     def toggle_play_pause(self) -> None:
         if self.download_status == DownloadStatus.DOWNLOADING:
             self.set_status(DownloadStatus.PAUSED)
+            self.pauseSignal.emit()
         else:
             self.set_status(DownloadStatus.DOWNLOADING)
+            self.startSignal.emit()
 
     def on_download_complete(self) -> None:
         self.set_status(DownloadStatus.FINISHED)
@@ -147,6 +152,12 @@ class DownloadCard(SimpleCardWidget):
         size = self.cover_label.size()
         self.cover_label.setImage(cover_path)
         self.cover_label.setFixedSize(size)
+        
+    def set_request_id(self, request_id: str):
+        self.request_id = request_id
+        
+    def get_request_id(self):
+        return self.request_id  
                 
 if(__name__ == "__main__"):
     app = QApplication(sys.argv)

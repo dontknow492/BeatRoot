@@ -3,8 +3,8 @@ sys.path.append(r'D:\Program\Musify')
 
 
 from PySide6.QtWidgets import QStackedWidget, QApplication
-from PySide6.QtGui import QPixmap, QColor
-from PySide6.QtCore import Signal, QTimer
+from PySide6.QtGui import QPixmap, QColor, QDesktopServices
+from PySide6.QtCore import Signal, QTimer, QUrl
 
 from qasync import QEventLoop, asyncSlot, asyncClose
 
@@ -47,6 +47,16 @@ class PlaylistView(ViewInterface):
     
     # def get_tracks_data(self):
         # return self.view_interface.get_tracks()
+def get_audio_url(videoId):
+    if len(videoId)>11:
+        return None
+    return f"https://music.youtube.com/watch?v={videoId}"
+        
+def open_in_web(song_id):
+        url = get_audio_url(song_id)
+        if url:
+            QDesktopServices.openUrl(QUrl(url))
+        
 if(__name__ == "__main__"):
     app = QApplication([])
     loop = QEventLoop(app)
@@ -63,8 +73,14 @@ if(__name__ == "__main__"):
         data = json.load(file)
         view.load_from_data(data, "MPREb_GdL2zr1Ks0v")
     view.show()
-    
     # QTimer.singleShot(1000, lambda: view.load_from_database("RDCLAK5uy_kiDNaS5nAXxdzsqFElFKKKs0GUEFJE26w"))
+    
+    view.likedSong.connect(lambda data: logger.debug(data))
+    view.queueSong.connect(lambda data: logger.debug(data))
+    view.downloadSong.connect(lambda song_id, title: logger.debug(f"{song_id}, {title}"))
+    view.share.connect(lambda song_id: logger.debug(song_id))
+    view.openSongInBrowser.connect(lambda song_id: open_in_web(song_id))
+    view.albumClicked.connect(lambda album_id: logger.debug(album_id))
     
     
     with loop:

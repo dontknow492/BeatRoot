@@ -4,22 +4,22 @@ from qfluentwidgets import SimpleCardWidget, InfoBarPosition, MessageDialog, Mes
 
 from PySide6.QtWidgets import QApplication, QFrame, QVBoxLayout, QGraphicsBlurEffect, QGraphicsPixmapItem, \
                             QWidget, QLabel, QGraphicsRectItem, QGraphicsScene, QGraphicsProxyWidget, QGraphicsView
-from PySide6.QtCore import Qt, QObject, QTimer, QEventLoop as QtEventLoop, QCoreApplication, QPoint, Slot, QSize
+from PySide6.QtCore import Qt, QObject, QTimer, QEventLoop as QtEventLoop, QUrl, Slot, QSize
 from PySide6.QtGui import QColor, QMouseEvent, QCursor, QIcon
-from PySide6.QtGui import QPainter, QPixmap, QBrush, QColor
+from PySide6.QtGui import QPainter, QPixmap, QBrush, QColor, QDesktopServices
 
 from qasync import QEventLoop, asyncSlot, asyncClose
 
 from src.utility.iconManager import ThemedIcon
 from src.utility.check_net_connectivity import is_connected_to_internet
 from src.utility.database_utility import DatabaseManager
-from src.utility.misc import is_online_song
+from src.utility.misc import is_online_song, get_audio_url
 from src.common.infoBarMsg import InfoTime
 from src.utility.enums import ImageFolder
 
 
 from src.interfaces import (AlbumInterface, PlaylistInterface, ArtistInterface, DownloadInterface,
-                            LocalInterface, StatsInterface)
+                            LocalInterface, StatsInterface, SettingInterface)
 from src.interfaces import HomeInterface
 from src.interfaces import SearchInterface, SearchResultInterface, SearchResultSkeleton
 from src.interfaces import LyricsInterface
@@ -60,16 +60,7 @@ class CardType(Enum):
     ALBUM = 3
     ONLINE_SONG = 4
     LOCAL_SONG = 5
-
-class Widget(QFrame):
-    def __init__(self, text: str, parent=None):
-        super().__init__(parent=parent)
-        self.label = SubtitleLabel(text, self)
-        self.hBoxLayout = QVBoxLayout(self)
-        self.hBoxLayout.addWidget(self.label, 1, Qt.AlignCenter)
-        self.setObjectName(text.replace(' ', '-'))
-        
-        
+    
 class ViewManager:
     MAX_VIEW = 6
 
@@ -187,6 +178,10 @@ class ViewManager:
         view.audioCardClicked.connect(self.parent.on_audioCardClicked)
         view.albumClicked.connect(self.parent._add_album_view)
         view.deleteSignal.connect(lambda: self.on_delete_view(view))
+        view.openSongInBrowser.connect(self.parent.open_in_web)
+        view.share.connect(self.parent.share_song)
+        view.downloadSong.connect(self.parent.download_song)
+        view.queueSong.connect(self.parent.add_song_to_queue)
 
         if isinstance(view, PlaylistView):
             view.play.connect(lambda: self.parent.play_list(object_id, CardType.PLAYLIST))
@@ -239,7 +234,7 @@ class LocalManager:
         self.local_view_signal(local_view)
         
     def local_view_signal(self, local_view: LocalView):
-        local_view.add_audio_to_queue.connect(self.parent.queue.add_song)
+        local_view.add_audio_to_queue.connect(self.parent.add_song_to_queue)
         local_view.play_dir.connect
         local_view.audioClicked.connect(self.parent.on_audioCardClicked)
         
@@ -269,8 +264,8 @@ class MainWindow(FluentWindow):
         # connecting signals
         self.signal_handler = SignalHandler(self)
         
-        self._load_last_played()
-        self._load_last_queue()
+        # self._load_last_played()
+        # self._load_last_queue()
         
         
         
@@ -291,7 +286,7 @@ class MainWindow(FluentWindow):
         
         #bottom interface
         self.statsInterface = StatsInterface(self.database_manager, self)
-        self.settingsInterface = Widget("Settings", self)
+        self.settingsInterface = SettingInterface(self)
         
         
         #interface which are extra, hidden on side bar, only visible when  option clicked
@@ -460,7 +455,18 @@ class MainWindow(FluentWindow):
         logger.info("queue song change")
         self.set_player_track(song_data)
         
-    def on_download(self, video_id, title):
+    def add_song_to_queue(self, song_data):
+        self.queue.add_song(song_data)
+        
+    def open_in_web(self, song_id):
+        url = get_audio_url(song_id)
+        if url:
+            QDesktopServices.openUrl(QUrl(url))
+            
+    def share_song(self, song_id):
+        url = get_audio_url(song_id)
+        
+    def download_song(self, video_id, title):
         self.downloadsInterface.add_download(video_id, title)
         
     def on_audioCardClicked(self, track_data, index: int = 0):
@@ -750,7 +756,7 @@ class SignalHandler(QObject):
         player.queuesClicked.connect(self.ui.on_queue_clicked)
         player.likedSignal.connect(self.ui.track_liked_id)
         player.unlikeSignal.connect(self.ui.track_unliked_id)
-        player.downloadClicked.connect(self.ui.on_download)
+        player.downloadClicked.connect(self.ui.download_song)
 
     def _queue_signals(self):
         self.ui.queue.audioCardClicked.connect(lambda song_data: self.ui.bottomPlayer.set_song(song_data))

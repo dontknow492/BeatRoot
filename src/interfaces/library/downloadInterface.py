@@ -27,7 +27,7 @@ class DownloadInterface(LibraryInterfaceBase):
         self.setObjectName("downloadInterface")
         
         self.song_downloader = SongDownloader(self)
-        self.song_downloader.start()
+        # self.song_downloader.start()
         self.download_dict = dict() #consist of request id, card
         #overideing
         self.scrollArea.deleteLater()
@@ -46,9 +46,9 @@ class DownloadInterface(LibraryInterfaceBase):
 
     def _init_signal_handler(self):
         # Connect song downloader signals to handle download progress and completion
-        self.song_downloader.download_progress_signal.connect(self._on_download_progress)
-        self.song_downloader.download_complete_signal.connect(self._on_download_complete)
-        self.song_downloader.download_error_signal.connect(self._on_download_error)
+        self.song_downloader.download_progress.connect(self._on_download_progress)
+        self.song_downloader.download_complete.connect(self._on_download_complete)
+        self.song_downloader.download_error.connect(self._on_download_error)
         self.cancelAllButton.clicked.connect(self._on_cancel_all)
 
     def _on_download_progress(self,   request_id: str, progress: float, total_size: float):
@@ -57,7 +57,7 @@ class DownloadInterface(LibraryInterfaceBase):
         if request_id in self.download_dict.keys():
             card: DownloadCard = self.download_dict[request_id]
             card.set_download_percentages(progress)
-            card.set_status(DownloadStatus.DOWNLOADING)
+            # card.set_status(DownloadStatus.DOWNLOADING)
             card.set_total_download(self._byte_to_mb(total_size), "MB")
 
     def _on_download_complete(self, request_id: str):
@@ -91,17 +91,24 @@ class DownloadInterface(LibraryInterfaceBase):
             logger.error(f"Invalid download url: {download_url}")
             return
         
-        card = self._create_download_card(video_id, title)
+        download_url = get_audio_url(video_id)
+        request_id = self.song_downloader.add_request(download_url, r"D:\Program\Musify\data\downloads")
+        if request_id is None:
+            logger.error("Request id is None")
+            return
+        card = self._create_download_card(request_id, video_id, title)
         if card is None:
             return
         self.addCard(card)
-        download_url = get_audio_url(video_id)
-        request = self.song_downloader.add_request(download_url, r"D:\Program\Musify\data\downloads")
-        self.download_dict[request] = card
-        logger.info(f"Download added for {video_id}")
         
         
-    def _create_download_card(self, video_id: str, title: str)->DownloadCard | None:
+        if request_id:
+            self.download_dict[request_id] = card
+            logger.info(f"Download added for {video_id}")
+        
+        
+        
+    def _create_download_card(self,request_id: str, video_id: str, title: str)->DownloadCard | None:
         if self.findChild(DownloadCard, f"{video_id}_card"):
             logger.error("Card already exists")
             return
@@ -110,19 +117,43 @@ class DownloadInterface(LibraryInterfaceBase):
             return
         cover_path = f"{ImageFolder.SONG.path}/{video_id}.png"
         card = DownloadCard()
+        card.set_status(DownloadStatus.DOWNLOADING)
         card.setObjectName(f"{video_id}_card")
         card.set_title(title)
         card.set_download_percentages(0)
         card.set_cover(cover_path)
-        card.deleteSignal.connect(lambda: self.cancel_download(video_id))
+        card.set_request_id(request_id)
+        card.pauseSignal.connect(lambda: self.pause_download(request_id))
+        card.startSignal.connect(lambda: self.start_download(request_id))
+        card.deleteSignal.connect(lambda: self.cancel_download(request_id))
+        
         return card
     
-    def cancel_download(self, video_id: str):
-        card = self.findChild(DownloadCard, f"{video_id}_card")
+    def pause_download(self, request_id: str):
+        # logger.info(f"Pause download: {request_id}")
+        self.song_downloader.pause_request(request_id)
+        # logger.debug(f"Download paused: {request_id}")
+        # card = self.download_dict.get(request_id, None)
+        # self.song_downloader.pause_request(request_id)
+    
+    def cancel_download(self, request_id: str):
+        card = self.download_dict.get(request_id, None)
         if card:
-            self.removeCard(card)
+            self.song_downloader.cancel_request(request_id)
+            # self.removeCard(card)
         else:
             logger.error("Card not found")
+            
+    def start_download(self, request_id: str):
+        logger.info(f"Start download: {request_id}")
+        self.song_downloader.add_request(request_id)
+        logger.info(f"Download started: {request_id}")
+        # card = self.download_dict.get(request_id, None)
+        # if card:
+        #     self.song_downloader.add_request(request_id)
+        #     card.set_status(DownloadStatus.READY)
+        # else:
+        #     logger.error("Card not found")
             
     def _byte_to_mb(self, byte: float)->float:
         if not byte:
