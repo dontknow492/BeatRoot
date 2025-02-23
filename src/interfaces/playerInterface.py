@@ -1,9 +1,18 @@
 from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolButton, TransparentDropDownToolButton
 from qfluentwidgets import FluentIcon, setCustomStyleSheet, setThemeColor, setTheme, Theme, ThemeColor
 from qfluentwidgets import RoundMenu, Action, Flyout
-
+import  ctypes
 import sys
+
+from src.interfaces import MusicQueue
+
 sys.path.append(r'D:\Program\Musify')
+print(sys.path)
+try:
+    ctypes.CDLL(r"D:\Program\Musify\libvlc.dll")
+    ctypes.CDLL(r"D:\Program\Musify\libvlccore.dll")
+except Exception as e:
+    print(e)
 # print(sys.path)
 from src.components.player.playerbase import PlayerScreen
 from src.utility.iconManager import ThemedIcon
@@ -64,6 +73,7 @@ class PlayerInterface(PlayerScreen):
         self.database_manager = database_manager
         self.data_fetcher.data_fetched.connect(self._on_fetching_finished)
         self.volume = 50
+        self.music_player.set_volume(self.volume)
         self.volumeSlider.setValue(self.volume)
         self.volumeValue.setText(str(self.volume))
         self.is_liked = False

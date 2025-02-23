@@ -1,3 +1,25 @@
+import  os
+import sys
+
+import vlc
+
+
+def get_resource_path(relative_path):
+    """Get the absolute path to a resource, works for dev and for PyInstaller."""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+# Example: Load an icon
+icon_path = get_resource_path("data/user/schema.sql")
+print(icon_path)
+
+
+
 from qfluentwidgets import FluentWindow, Theme, setTheme, setFont, SubtitleLabel, setThemeColor, ElevatedCardWidget, ScrollArea, SplashScreen
 from qfluentwidgets import FluentIcon, NavigationItemPosition, setCustomStyleSheet
 from qfluentwidgets import SimpleCardWidget, InfoBarPosition, MessageDialog, MessageBox, RoundMenu, Action
@@ -40,19 +62,6 @@ import asyncio
 from enum import Enum
 import threading
 import os
-
-def get_resource_path(relative_path):
-    """Get the absolute path to a resource, works for dev and for PyInstaller."""
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
-
-# Example: Load an icon
-icon_path = get_resource_path("data/user/schema.sql")
 
 class CardType(Enum):
     PLAYLIST = 1

@@ -49,7 +49,7 @@ class PlayerScreen(SimpleCardWidget):
         self.initExtraContainer()
         # self.extraContainer_layout.setAlignment(Qt.AlignRight)
         
-        self.music_control_panel = MusicControlPanel(self)
+        self.music_control_panel = MusicControlPanel()
         
         self.hBoxLayout.addWidget(self.coverLabel, Qt.AlignmentFlag.AlignLeading)
         self.hBoxLayout.addWidget(self.title_author_container, alignment= Qt.AlignmentFlag.AlignLeading)

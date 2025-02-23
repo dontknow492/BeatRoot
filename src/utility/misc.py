@@ -1,7 +1,5 @@
 
 import re
-from typing import Optional
-import vlc
 
 def get_thumbnail_url(videoId):
     if len(videoId)>11:

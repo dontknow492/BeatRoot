@@ -6,8 +6,9 @@ from typing import Optional
 from PySide6 import QtWidgets, QtGui, QtCore
 from PySide6.QtCore import Qt, QObject, QTimer
 from PySide6.QtGui import QAction
-import vlc
 
+
+import vlc
 
 class MusicPlayer(QObject):
     def __init__(self, parent: Optional[QObject] = None) -> None:
@@ -257,21 +258,21 @@ if(__name__ == "__main__"):
     import time
     from loguru import logger
     player = MusicPlayer()
-    song = r"D:\Program\Musify\Sample Songs\Song\T-Series Bollywood Classics - Hum Tumko Nigahon Mein Lyrical Video ｜ Garv-Pride & Honour ｜ Udit N,Shreya G｜Salman Khan, Shilpa S.m4a"
+    # song = r"D:\Program\Musify\Sample Songs\Song\T-Series Bollywood Classics - Hum Tumko Nigahon Mein Lyrical Video ｜ Garv-Pride & Honour ｜ Udit N,Shreya G｜Salman Khan, Shilpa S.m4a"
     # player.media_player.audio_filter_set("normvol", True)
-    player.set_media(song)
-    player.set_volume(100)
+    # player.set_media(song)
+    # player.set_volume(100)
     # player.set_echo(True)
-    player.set_reverb(True)
-    player.set_normalization(True)
-    bands = {
-    0: 5.0,  # Boost deep bass (60 Hz) by +5 dB
-    1: 3.0,  # Boost bass (170 Hz) by +3 dB
-    8: -4.0, # Reduce brightness (14 kHz) by -4 dB
-    9: -5.0  # Reduce airiness (16 kHz) by -5 dB
-}   
-    print(player.get_preset_band_values(2))
-    player.set_equalizer(0, bands)
+    # player.set_reverb(True)
+    # player.set_normalization(True)
+#     bands = {
+#     0: 5.0,  # Boost deep bass (60 Hz) by +5 dB
+#     1: 3.0,  # Boost bass (170 Hz) by +3 dB
+#     8: -4.0, # Reduce brightness (14 kHz) by -4 dB
+#     9: -5.0  # Reduce airiness (16 kHz) by -5 dB
+# }
+#     print(player.get_preset_band_values(2))
+    # player.set_equalizer(0, bands)
     # player.disable_equalizer()
     # player.set_stereo_effect(True)
     
@@ -289,5 +290,5 @@ if(__name__ == "__main__"):
     #     #     break
     # # player.stop()
     
-    logger.debug(f"Presets: {player.get_preset_list()}")
+    # logger.debug(f"Presets: {player.get_preset_list()}")
     # logger.debug(f"Rock index: {player.presets.index('rock')}")

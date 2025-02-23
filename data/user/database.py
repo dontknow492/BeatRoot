@@ -15,8 +15,8 @@ def get_resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 # Use this function to locate your files
-DB_NAME = get_resource_path("data/user/database.db")
-SCHEMA_SQL_PATH = get_resource_path("data/user/schema.sql")
+DB_NAME = get_resource_path("data\\user\\database.db")
+SCHEMA_SQL_PATH = get_resource_path("data\\user\\schema.sql")
 
 # SQL Schema
 with open(SCHEMA_SQL_PATH, "r") as sql_file:
