@@ -1,33 +1,28 @@
-from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QStandardPaths
-
-from qfluentwidgets import PushSettingCard, FolderListSettingCard, SwitchSettingCard, OptionsSettingCard, HyperlinkCard, \
-    ComboBoxSettingCard, SettingCardGroup, PrimaryPushSettingCard
-from qfluentwidgets import qconfig, FluentIcon, ConfigItem
-
-
 import sys
+
+from PySide6.QtCore import QStandardPaths, Signal
+from PySide6.QtWidgets import QApplication
+from qfluentwidgets import FolderListSettingCard, SwitchSettingCard, OptionsSettingCard, HyperlinkCard, \
+    ComboBoxSettingCard, SettingCardGroup, PrimaryPushSettingCard
+from qfluentwidgets import qconfig, FluentIcon
+
 sys.path.append(r'D:\Program\Musify')
 
 from config.config import MyConfig
 
-from loguru import logger
-
-from src.common.myScroll import SideScrollWidget, HorizontalScrollWidget, VerticalScrollWidget
-
-from qfluentwidgets import QConfig, OptionsConfigItem, ConfigItem, OptionsValidator
-
+from src.common.myScroll import VerticalScrollWidget
 
 
 class SettingInterface(VerticalScrollWidget):
+    aboutSignal  = Signal()
     def __init__(self, parent=None):
         super().__init__(title= "Settings", parent=parent)
         self.setObjectName("SettingInterface")
         self.cfg = MyConfig()
         qconfig.load("config/config.json", self.cfg)
-        self.initUi()
+        self.init_ui()
         
-    def initUi(self):
+    def init_ui(self):
         appearance_group = SettingCardGroup("Interface", self)
         playback_group = SettingCardGroup("Playback", self)
         download_group = SettingCardGroup("Download", self)
@@ -54,7 +49,7 @@ class SettingInterface(VerticalScrollWidget):
             startup_page_card
         ])
         
-        equilizer_card = SwitchSettingCard(
+        equalizer_card = SwitchSettingCard(
             FluentIcon.MUSIC,
             "Enable Equalizer",
             "Enable the equalizer feature",
@@ -77,7 +72,7 @@ class SettingInterface(VerticalScrollWidget):
         )
         
         playback_group.addSettingCards([
-            equilizer_card,
+            equalizer_card,
             endless_play_card,
             normalize_audio_card
         ])
@@ -123,7 +118,7 @@ class SettingInterface(VerticalScrollWidget):
         about_button = PrimaryPushSettingCard(
                     "BeatRoot",
                     FluentIcon.INFO,
-                    "About Beatroot"
+                    "About BeatRoot"
         )
         about_group.addSettingCards([
             github_card,
@@ -137,9 +132,13 @@ class SettingInterface(VerticalScrollWidget):
             download_group,
             about_group
         ])
+        about_button.clicked.connect(self.aboutSignal.emit)
+        self.cfg.save()
 
-if(__name__ == "__main__"):
+
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     w = SettingInterface()
+    w.aboutSignal.connect(lambda: print("about"))
     w.show()
     app.exec()

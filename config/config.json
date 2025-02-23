@@ -1,0 +1,24 @@
+{
+    "About": {
+        "CheckUpdate": true
+    },
+    "Download": {
+        "DownloadFolder": [
+            ".cache/downloads"
+        ],
+        "DownloadCodec": "M4A('recommended')"
+    },
+    "Playback": {
+        "EnableEqualizer": true,
+        "EndlessPlay": true,
+        "NormalizeAudio": true
+    },
+    "Interface": {
+        "StartupPage": "Home",
+        "ThemeMode": "Auto"
+    },
+    "QFluentWidgets": {
+        "ThemeColor": "#ff009faa",
+        "ThemeMode": "Light"
+    }
+}
