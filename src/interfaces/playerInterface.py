@@ -1,6 +1,6 @@
 from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolButton, TransparentDropDownToolButton
 from qfluentwidgets import FluentIcon, setCustomStyleSheet, setThemeColor, setTheme, Theme, ThemeColor
-from qfluentwidgets import RoundMenu, Action
+from qfluentwidgets import RoundMenu, Action, Flyout
 
 import sys
 sys.path.append(r'D:\Program\Musify')
@@ -127,6 +127,12 @@ class PlayerInterface(PlayerScreen):
         self.titleLabel.clicked.connect(self.titleClicked.emit)
         self.authorLabel.clicked.connect(self.artistClicked.emit)
         self.downloadButton.clicked.connect(self.on_download_clicked)
+        self.controlPanel.clicked.connect(self.on_control_panel_clicked)
+        #music contraol signal
+        self.music_control_panel.preset_changed.connect(lambda preset_index: self.music_player.set_equalizer(preset= preset_index))
+        self.music_control_panel.normalizeSignal.connect(lambda state: self.music_player.set_normalization(state))
+        self.music_control_panel.band_changed.connect(lambda bands: self.music_player.set_equalizer(bands=bands))
+        # self.music_control_panel.equalizeSignal.connect(lambda state: self.music_player.set_equalizer(preset=1))
 
     def set_song(self, song_data: dict) -> None:
         """Set the current song by ID."""
@@ -378,6 +384,10 @@ class PlayerInterface(PlayerScreen):
         self.set_current_duration(0)
     # def get    
     
+    def on_control_panel_clicked(self):
+        print("Control panel clicked")
+        Flyout.make(self.music_control_panel, self.controlPanel, self, isDeleteOnClose=False)
+    
     @asyncSlot()    
     async def save_history(self,song_id, file_path, duration: int ):
         """Save the song history to the database."""
@@ -396,7 +406,7 @@ if(__name__ == "__main__"):
     app = QApplication(sys.argv)
     song = r"D:\Media\Music\Song\Abhijeet - Woh Ladki Jo.m4a"
     song_data = {
-        "videoId": "YALvuUpY_b0",
+        "videoId": "YALvuUpY_b0s",
         "title": "Woh Ladki Jo",
         "artists": [{"name": "Abhijeet"}],
         "path": song

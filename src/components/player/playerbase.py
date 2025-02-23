@@ -13,6 +13,7 @@ from src.common.myLabel import ClickableBodyLabel, ClickableTitleLabel, MyTitleL
 from src.common.myButton import GifPrimaryToolButton
 from src.animation.loading_circle import LoadingCircle
 from src.common.myFrame import HorizontalFrame,VerticalFrame
+from src.components.dialogs.audio_control import MusicControlPanel
 
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy
 from PySide6.QtCore import Qt, QSize
@@ -47,6 +48,8 @@ class PlayerScreen(SimpleCardWidget):
         
         self.initExtraContainer()
         # self.extraContainer_layout.setAlignment(Qt.AlignRight)
+        
+        self.music_control_panel = MusicControlPanel(self)
         
         self.hBoxLayout.addWidget(self.coverLabel, Qt.AlignmentFlag.AlignLeading)
         self.hBoxLayout.addWidget(self.title_author_container, alignment= Qt.AlignmentFlag.AlignLeading)
@@ -142,11 +145,13 @@ class PlayerScreen(SimpleCardWidget):
         self.speedButton = TransparentDropDownToolButton(ThemedIcon.PLAYBACK_SPEED, self.moreOptionContainer)
         self.likeButton = TransparentToolButton(FluentIcon.HEART, self.moreOptionContainer)
         self.downloadButton = TransparentToolButton(FluentIcon.DOWNLOAD, self.moreOptionContainer)
+        self.controlPanel = TransparentToolButton(FluentIcon.SETTING, self.moreOptionContainer)
         
         self.moreOptionContainer.addWidget(self.queuesButton)
         self.moreOptionContainer.addWidget(self.speedButton)
         self.moreOptionContainer.addWidget(self.likeButton)
         self.moreOptionContainer.addWidget(self.downloadButton)
+        self.moreOptionContainer.addWidget(self.controlPanel)
         
         self.volumeContainer = HorizontalFrame(self.extraContainer)
         self.volumeContainer.setContentSpacing(0)
@@ -176,6 +181,7 @@ class PlayerScreen(SimpleCardWidget):
         self.volumeButton.setToolTip("Volume")
         self.speedButton.setToolTip("Playback Speed")
         self.downloadButton.setToolTip("Download")
+        self.controlPanel.setToolTip("Audio Control")
     
     def initCursor(self):
         self.playButton.setCursor(Qt.PointingHandCursor)
@@ -192,6 +198,7 @@ class PlayerScreen(SimpleCardWidget):
         self.authorLabel.setCursor(Qt.PointingHandCursor)
         self.audioSlider.setCursor(Qt.PointingHandCursor)
         self.downloadButton.setCursor(Qt.PointingHandCursor)
+        self.controlPanel.setCursor(Qt.PointingHandCursor)
     
     def setQss(self):
         qss = "PrimaryToolButton{border-radius: 19px;}"

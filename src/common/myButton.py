@@ -1,9 +1,10 @@
-from PySide6.QtWidgets import QApplication, QPushButton, QVBoxLayout, QWidget
+from PySide6.QtWidgets import QApplication, QPushButton, QVBoxLayout, QWidget, QFrame, QHBoxLayout
 from PySide6.QtGui import QMovie, QIcon, QTransform, QPixmap
-from PySide6.QtCore import QSize, Qt, QVariantAnimation
+from PySide6.QtCore import QSize, Qt, QVariantAnimation, Signal
 import sys
 
-from qfluentwidgets import PrimaryPushButton, PrimaryToolButton, FluentIconBase, FluentIcon, Theme, isDarkTheme
+from qfluentwidgets import PrimaryPushButton, PrimaryToolButton, FluentIconBase, FluentIcon,\
+    Theme, isDarkTheme, SwitchButton, BodyLabel, TitleLabel, StrongBodyLabel
 
 from typing import overload, override
 
