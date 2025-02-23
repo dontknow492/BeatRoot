@@ -9,7 +9,7 @@
         "DownloadCodec": "M4A('recommended')"
     },
     "Playback": {
-        "EnableEqualizer": true,
+        "EnableEqualizer": false,
         "EndlessPlay": true,
         "NormalizeAudio": true
     },
