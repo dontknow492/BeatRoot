@@ -1,8 +1,9 @@
-from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolButton, TransparentDropDownToolButton
-from qfluentwidgets import FluentIcon, setCustomStyleSheet, setThemeColor, setTheme, Theme, ThemeColor
-from qfluentwidgets import ElevatedCardWidget, PrimaryPushButton, PrimaryToolButton, FlowLayout
-
 import sys
+
+from qfluentwidgets import ElevatedCardWidget, PrimaryToolButton, setTheme, Theme
+from qfluentwidgets import FluentIcon, setCustomStyleSheet
+from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel
+
 sys.path.append(r'D:\Program\Musify')
 
 import time
@@ -12,12 +13,11 @@ from src.common.myLabel import ClickableBodyLabel
 from src.utility.enums import PlaceHolder, ImageFolder
 # print(sys.path)
 
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy
+from PySide6.QtWidgets import QFrame, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy
 from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtGui import QFont, QColor, QFontMetrics, QTextLayout
+from PySide6.QtGui import QFont, QColor
 from PySide6.QtWidgets import QGraphicsDropShadowEffect
 
-from typing import overload
 from pathlib import Path
 
 class PortraitCardBase(ElevatedCardWidget):
@@ -347,6 +347,7 @@ class PortraitAlbumCard(PortraitCardBase):
         self.titleLabel.setText(f"{self.titleLabel.text()} ({year})")
     
 if(__name__ == "__main__"):
+    setTheme(Theme.DARK)
     app = QApplication(sys.argv)
     title = "This is a title."
     info = "hello"

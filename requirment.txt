@@ -5,9 +5,11 @@ loguru
 mutagen
 python-vlc
 yt-dlp
-qsaync
+qasync
 xxhash
 cachetools
 aiosqlite
 aiofiles
 pillow
+pyyaml
+

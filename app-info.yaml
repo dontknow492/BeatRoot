@@ -1,0 +1,13 @@
+app_name: "BeatRoot"
+icon: "app.icon"
+version: "1.0.0"
+build: "Nightly-20250224"
+author: "Ghost"
+channel: "Stable"
+license: "MIT"
+description: |
+  BeatRoot is a free and open source modern, feature-rich music player built entirely with Python.
+  Supports both local playback and online streaming (YouTube Music). Designed with a sleek Qt-based UI
+  using PySide6 and QFluentWidget, offering a smooth and intuitive user experience.
+source: "https://github.com/dontknow492/BeatRoot"
+bug_report: "https://github.com/dontknow492/BeatRoot/issues"

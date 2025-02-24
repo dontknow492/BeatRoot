@@ -21,6 +21,7 @@ class SettingInterface(VerticalScrollWidget):
         self.cfg = MyConfig()
         qconfig.load("config/config.json", self.cfg)
         self.init_ui()
+
         
     def init_ui(self):
         appearance_group = SettingCardGroup("Interface", self)
@@ -28,7 +29,7 @@ class SettingInterface(VerticalScrollWidget):
         download_group = SettingCardGroup("Download", self)
         about_group = SettingCardGroup("About", self)
         theme_card = OptionsSettingCard(
-            qconfig.themeMode,
+            self.cfg.theme,
             FluentIcon.BRUSH,
             "Application Theme",
             "Adjust the appearance of your application",
