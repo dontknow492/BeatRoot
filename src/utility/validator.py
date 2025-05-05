@@ -13,7 +13,7 @@ def validate_path(path, type_: str = 'file'):
     type_ = type_.lower()
     
     if type_.lower() == 'file':
-        if path_obj.is_file():
+        if path_obj.exists() and path_obj.is_file():
             return True
         else:
             return False

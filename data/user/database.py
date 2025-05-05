@@ -3,7 +3,13 @@ import os
 import sys
 
 import aiosqlite
+
+from pathlib import Path
+
+
 async def initialize_database(db_name: str , schema_sql: str):
+    path = Path(db_name)
+    os.makedirs(path.parent, exist_ok=True)
     """Initializes the SQLite database with the schema."""
     try:
         async with aiosqlite.connect(db_name) as conn:

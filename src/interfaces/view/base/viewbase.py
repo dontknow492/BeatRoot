@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from qfluentwidgets import FluentIcon
 from queue import Queue
 

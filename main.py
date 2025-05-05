@@ -289,7 +289,7 @@ class MainWindow(FluentWindow):
         # starting 
         self.data_fetcher.start()
         self.schema_path = resource_path("data/user/schema.sql")
-        self.database_manager = DatabaseManager(resource_path("data/user/database.db"), self.schema_path, self)
+        self.database_manager = DatabaseManager("data/user/database.db", self.schema_path, self)
 
         self.info_msg_handler = InfoTime(self, pos=InfoBarPosition.BOTTOM, duration=2000)
         self.view_manager = ViewManager(self.stackedWidget, self.data_fetcher, self.database_manager, self)

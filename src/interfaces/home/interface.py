@@ -148,6 +148,7 @@ class HomeInterface(QStackedWidget):
                         break
                 if self.home_screen.addHomeGenre(genre):
                     count += 1
+        self.save_data(data, DataPath.GENRE_CATEGORY)
                     
                     
     def load_home(self):
@@ -210,6 +211,7 @@ class HomeInterface(QStackedWidget):
             logger.info("Home data fetched successfully.")
             self.home_screen.setHomeData(data)
             self.home_screen.loadData()
+            self.save_data(data, DataPath.HOMEPAGE)
             logger.success("Home UI loaded.")
             self.loading_screen.stop_animation()
             self.switch_to(self.home_screen)
@@ -218,11 +220,12 @@ class HomeInterface(QStackedWidget):
             self.switch_to(self.home_screen)
             
     
-    async def save_data(self, data, path: DataPath):
+    def save_data(self, data, path: DataPath):
         file_path = path.getAbsPath
+        os.makedirs(Path(file_path).parent, exist_ok=True)
         try:
-            async with aiofiles.open(file_path, 'w') as file:
-                await file.write(json.dumps(data, indent=4))
+            with open(file_path, 'w') as file:
+                file.write(json.dumps(data, indent=4))
             logger.info(f"Data saved to {file_path}")
         except Exception as e:
             logger.exception(f"Error saving data to {file_path}: {e}")

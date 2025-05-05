@@ -23,11 +23,11 @@ class DataPath(Enum):
     
     @property
     def getAbsPath(self):
-        return resource_path(f"{self.DATA_DIR.value}/{self.APP_DATA_DIR.value}/{self.value}")
+        return f"{self.DATA_DIR.value}/{self.APP_DATA_DIR.value}/{self.value}"
     
     @property
     def getFullPath(self):
-        return resource_path(Path(__file__).parent.parent / self.getAbsPath)
+        return Path(__file__).parent.parent / self.getAbsPath
     
 
 class SortType(Enum):

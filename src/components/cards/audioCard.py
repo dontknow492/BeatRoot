@@ -252,6 +252,8 @@ class AudioCard(AudioCardBase):
         self.artist = artist
         if isinstance(artist, list):
             for index, x in enumerate(artist):
+                if index>10:
+                    break
                 if isinstance(x, dict):
                     label:QLabel = self.create_artist_label(x)
                     self.authorContainer.addWidget(label)
