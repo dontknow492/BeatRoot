@@ -167,13 +167,15 @@ class HomeScreen(VerticalScrollWidget):
         for data in self.home_data:
             title = data.get("title", None)
             scroll_area = self.createSideScrollArea(title)
-            logger.info(f"Loading ui for: {title}")
             for content in data.get("contents", []):
                 # logger.info(self.categorizeContent(content).value)
                 card = self.createCard(content)
                 if card:
                     scroll_area.addWidget(card)
-            self.addWidget(scroll_area)
+            if scroll_area.count():
+                self.addWidget(scroll_area)
+            else:
+                scroll_area.deleteLater()
             
         
         
@@ -185,7 +187,6 @@ class HomeScreen(VerticalScrollWidget):
             widget.setCover(path)
         else:
             self.cover_queue.put((path, uid))
-            logger.info(f"Card not found for: {object_name} so appending it to queue")
     
     def set_cover_from_queue(self):
         while not self.cover_queue.empty():
@@ -193,12 +194,10 @@ class HomeScreen(VerticalScrollWidget):
             object_name = f"{uid}_card"
             card = self.findChild(QFrame, object_name)
             if card:
-                logger.info(f"Setting cover for: {object_name} from queue")
                 card.setCover(path)
-                # card.loadingLabel.hide()
                 card.coverLabel.show()
-            else:
-                logger.error(f"Card not found for: {object_name}")
+            # else:
+            #     logger.error(f"Card not found for: {object_name}")
         
     def createSideScrollArea(self, title):
         scroll_area = SideScrollWidget(title, self)
@@ -297,7 +296,7 @@ class HomeScreen(VerticalScrollWidget):
             return ContentType.VIDEO
         elif {'browserId', 'subscriber'}.issubset(keys):
             return ContentType.ARTIST
-        elif {'title', 'browseId', 'year', 'thumbnails'}.issubset(keys) or len(keys) == 3:
+        elif {'title', 'browseId', 'thumbnails', 'year'}.issubset(keys) or len(keys) == 3:
             return ContentType.ALBUM
         else:
             return ContentType.UNKNOWN

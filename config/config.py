@@ -15,7 +15,7 @@ class MyConfig(QConfig):
     theme = OptionsConfigItem("Interface", "ThemeMode", "Light", OptionsValidator(["Light", "Dark", "Auto"]), restart=True)
     theme.valueChanged.connect(on_theme_changed)
 
-    downloadFolder = ConfigItem("Download", "DownloadFolder", [], restart=True)
+    downloadFolder = ConfigItem("Download", "DownloadFolder", ["downloads/"], restart=True)
     download_codec = OptionsConfigItem("Download", "DownloadCodec", "M4A('recommended')", OptionsValidator(["M4A('recommended')", "MP3", "WAV", "OPUS"]),restart=True)
     
     check_update = ConfigItem("About", "CheckUpdate", True, validator= BoolValidator(), restart=True)

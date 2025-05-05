@@ -43,7 +43,7 @@ class StatsFilter(Enum):
             StatsFilter.MONTH: "-1 month",
             StatsFilter.SIX_MONTHS: "-6 months",
             StatsFilter.YEAR: "-1 year",
-            StatsFilter.ALL_TIME: None,  # No filter for all-time
+            StatsFilter.ALL_TIME: "All",  # No filter for all-time
         }
         return intervals[self]
 

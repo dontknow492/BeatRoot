@@ -100,7 +100,6 @@ class ViewBase(VerticalScrollWidget):
         if card:
             card.setCover(path)
             # card.loadingLabel.hide()
-            logger.success(f"Setting cover for: {object_name} from signal") 
             card.update()
         else:
             self.set_cover_queue.put((path, uid))

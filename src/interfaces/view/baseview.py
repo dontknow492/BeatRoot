@@ -80,7 +80,6 @@ class ViewInterface(QStackedWidget):
         if uid != self.view_request_id:
             return
         logger.info("data changed")
-        logger.debug(f"DATA....: {data}")
         self.load_from_data(data, self.view_id)
         
     def load_from_data(self, data, view_id):

@@ -92,3 +92,6 @@ Thumbs.db
 # Ignore demo and sample files
 demo/
 Sample Songs/
+output
+
+py2exe_build.json

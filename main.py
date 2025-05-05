@@ -834,45 +834,48 @@ class SignalHandler(QObject):
         # todo: implement logic
 
 def main():
-    # setTheme(Theme.LIGHT)
-    # Configure logging
-    logger.add("logs/app.log", rotation="1 week", level="DEBUG", encoding="utf-8", backtrace=True, diagnose=True)
-    logger.info("App started")
+    try:
+        logger.add("logs/app.log", rotation="1 week", level="DEBUG", encoding="utf-8", backtrace=True, diagnose=True)
+        logger.info("App started")
 
-    # Create the Qt application
-    app = QApplication(sys.argv)
-    # app icon
-    app.setWindowIcon(QIcon("app.ico"))
-    loop = QEventLoop(app)
-    asyncio.set_event_loop(loop)  # Set the event loop for asyncio
+        # Create the Qt application
+        app = QApplication(sys.argv)
+        # app icon
+        app.setWindowIcon(QIcon("app.ico"))
+        loop = QEventLoop(app)
+        asyncio.set_event_loop(loop)  # Set the event loop for asyncio
+        window = MainWindow()
+        # window.setWindowState(Qt.WindowState.WindowFullScreen)
+        window.setContentsMargins(0, 0, 0, 98)
+        window.move(100, 100)
+        window.showMaximized()
+        # window.showFullScreen()
 
-    window = MainWindow()
-    # window.setWindowState(Qt.WindowState.WindowFullScreen)
-    window.setContentsMargins(0, 0, 0, 98)
-    window.move(100, 100)
-    window.showMaximized()
-    # window.showFullScreen()
+        # Create an event to signal app closure
+        app_close_event = asyncio.Event()
 
-    # Create an event to signal app closure
-    app_close_event = asyncio.Event()
+        app.aboutToQuit.connect(app_close_event.set)
 
-    app.aboutToQuit.connect(app_close_event.set)
+        logger.critical(f"Size: {window.geometry()}")
+        # Run the Qt event loop
+        with loop:
+            try:
+                # exit_code = app.exec()
+                loop.run_until_complete(app_close_event.wait())
+            except asyncio.CancelledError:
+                logger.info("Application shutdown requested.")
+            finally:
+                loop.close()
+                loop.stop()
+                logger.info("Event loop closed.")
+                logger.info("Application shutting down...")
+                logger.remove()
+                os._exit(0)
 
-    logger.critical(f"Size: {window.geometry()}")
-    # Run the Qt event loop
-    with loop:
-        try:
-            # exit_code = app.exec()
-            loop.run_until_complete(app_close_event.wait())
-        except asyncio.CancelledError:
-            logger.info("Application shutdown requested.")
-        finally:
-            loop.close()
-            loop.stop()
-            logger.info("Event loop closed.")
-            logger.info("Application shutting down...")
-            logger.remove()
-            os._exit(0)
+    except Exception as e:
+        logger.critical(f"Error in main: {e}")
+        logger.remove()
+        os._exit(1)
 
 
 

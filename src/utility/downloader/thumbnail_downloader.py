@@ -43,7 +43,7 @@ class ThumbnailDownloader(QObject):
             return
         path = Path(output_dir) / output_name
         if path.exists():
-            logger.info(f"Thumbnail already exists: {path}")
+            # logger.info(f"Thumbnail already exists: {path}")
             self.download_finished.emit(str(path), uid)  # Emit signal for existing file
             return
         
@@ -59,8 +59,8 @@ class ThumbnailDownloader(QObject):
         reply.output_path = str(Path(output_dir) / output_name)
         reply.uid = uid
         reply.crop = is_youtube_thumbnail_url(url)
-        if reply.crop:
-            logger.info(f"Need to Crop the image: {url}")
+        # if reply.crop:
+            # logger.info(f"Need to Crop the image: {url}")
         # Connect the finished signal to a slot
         reply.finished.connect(lambda: self.handle_thumbnail_download_finished(reply))
         

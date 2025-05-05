@@ -120,10 +120,10 @@ class HomeInterface(QStackedWidget):
     def _on_fetch_finished(self, data, uid):
         if uid == self.home_request_id:
             self._on_home_fetched(data)
-            asyncio.create_task(self.save_data(data, DataPath.HOMEPAGE))
+            self.save_data(data, DataPath.HOMEPAGE)
         elif uid == self.genre_request_id:
             self._on_genre_fetched(data)
-            asyncio.create_task(self.save_data(data, DataPath.GENRE_CATEGORY))
+            self.save_data(data, DataPath.GENRE_CATEGORY)
             
     def _fetch_genres(self):
         self.genre_path =  DataPath.GENRE_CATEGORY.getAbsPath

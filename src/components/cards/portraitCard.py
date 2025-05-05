@@ -343,6 +343,8 @@ class PortraitAlbumCard(PortraitCardBase):
         return self.albumId
         
     def setYear(self, year):
+        if year is None:
+            year = "Unknown"
         self.year = year
         self.titleLabel.setText(f"{self.titleLabel.text()} ({year})")
     
