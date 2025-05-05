@@ -254,6 +254,8 @@ class SearchResultScreen(VerticalFrame):
             video_id
         )
         card.clicked.connect(lambda: self.audioCardClicked.emit(audio))
+        card.albumClicked.connect(self.albumCardClicked.emit)
+        card.artistClicked.connect(self.artistCardClicked.emit)
         self.create_audio_menu(card)
         return card
     

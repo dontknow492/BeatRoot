@@ -11,10 +11,13 @@ def get_resource_path(relative_path):
 import os
 import sys
 
-parent_dir = os.path.dirname(os.getcwd())
+# Get the absolute path to the directory containing this script
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
-os.environ['VLC_PLUGIN_PATH'] = os.path.join(parent_dir, "plugins")
-os.environ['VLC_LIB'] = os.path.join(parent_dir, "libvlc.dll")
+# Set environment variables for VLC
+os.environ['VLC_PLUGIN_PATH'] = os.path.join(current_dir, "plugins")
+os.environ['VLC_LIB'] = os.path.join(current_dir, "libvlc.dll")
+# print(parent_dir)
 # Example: Load an icon
 # icon_path = get_resource_path("data/user/schema.sql")
 # print(icon_path)
