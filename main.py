@@ -7,11 +7,10 @@
 #         base_path = os.path.abspath(".")
 #
 #     return os.path.join(base_path, relative_path)
-
-import os
-import sys
+import ctypes
 import gettext
-# Override translation function to avoid looking for .mo files
+import os
+
 gettext.translation = lambda *args, **kwargs: gettext.NullTranslations()
 
 
@@ -36,10 +35,29 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 # Set environment variables for VLC
 os.environ['VLC_PLUGIN_PATH'] = os.path.join(current_dir, "plugins")
 os.environ['VLC_LIB'] = os.path.join(current_dir, "libvlc.dll")
-# print(parent_dir)
-# Example: Load an icon
-# icon_path = get_resource_path("data/user/schema.sql")
-# print(icon_path)
+
+try:
+    ctypes.CDLL(r"./libvlc.dll")
+    ctypes.CDLL(r"./libvlccore.dll")
+except Exception as e:
+    print("libvlc.dll not found")
+    exit(0)
+
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    if hasattr(sys, '_MEIPASS'):
+        # PyInstaller bundle
+        base_path = sys._MEIPASS
+    elif getattr(sys, 'frozen', False):
+        # Nuitka bundle (or similar)
+        base_path = os.path.dirname(sys.executable)
+    else:
+        # Development mode
+        # __file__ is inside src, so go up to project root
+        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    return os.path.join(base_path, relative_path)
 
 import asyncio
 import os
@@ -53,7 +71,7 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 from loguru import logger
 from qasync import QEventLoop, asyncSlot, asyncClose
-from qfluentwidgets import FluentIcon, NavigationItemPosition, setTheme, Theme
+from qfluentwidgets import FluentIcon, NavigationItemPosition
 from qfluentwidgets import FluentWindow
 from qfluentwidgets import InfoBarPosition, MessageBox
 
@@ -813,7 +831,6 @@ class SignalHandler(QObject):
         setting = self.ui.settingsInterface
         setting.aboutSignal.connect(self.ui.on_about_clicked)
         # todo: implement logic
-
 
 def main():
     # setTheme(Theme.LIGHT)

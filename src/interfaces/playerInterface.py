@@ -1,44 +1,35 @@
-from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolButton, TransparentDropDownToolButton
-from qfluentwidgets import FluentIcon, setCustomStyleSheet, setThemeColor, setTheme, Theme, ThemeColor
-from qfluentwidgets import RoundMenu, Action, Flyout
-import  ctypes
+from qfluentwidgets import FluentIcon, setTheme, Theme
+import ctypes
 import sys
 
-from src.interfaces import MusicQueue
+from qfluentwidgets import FluentIcon, setTheme, Theme
+from qfluentwidgets import RoundMenu, Action, Flyout
 
 
-try:
-    ctypes.CDLL(r"libvlc.dll")
-    ctypes.CDLL(r"libvlccore.dll")
-except Exception as e:
-    print(e)
 # print(sys.path)
 from src.components.player.playerbase import PlayerScreen
 from src.utility.iconManager import ThemedIcon
 from src.utility.duration_parse import milliseconds_to_duration
 from src.utility.enums import PlaceHolder, ImageFolder
-from src.utility.song_utils import get_stream_url
 
 from enum import Enum
 from loguru import logger
-from typing import Optional, Union
 
 from src.components.player.musicplayer import MusicPlayer
 from src.api.data_fetcher import YTMusicMethod, DataFetcherWorker
 from src.utility.database_utility import DatabaseManager
 from src.utility.misc import is_online_song
 
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy
-from PySide6.QtCore import Qt, QSize, Signal, QTimer, QObject
-from PySide6.QtGui import QFont, QColor, QAction
-from PySide6.QtWidgets import QGraphicsDropShadowEffect
+from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import Signal, QTimer, QObject
 from pathlib import Path
 import vlc
 import time
 
 
-from qasync import QEventLoop, asyncSlot, asyncClose
-import asyncio
+from qasync import asyncSlot
+
+
 # from torchvision.datasets import ImageFolder
 
 class PlayerState(Enum):

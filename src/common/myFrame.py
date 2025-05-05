@@ -1,15 +1,15 @@
-from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolButton, TransparentDropDownToolButton
-from qfluentwidgets import FluentIcon, setCustomStyleSheet, setThemeColor, setTheme, Theme, ThemeColor, ScrollArea
-from qfluentwidgets import SmoothScrollArea, FlowLayout, PrimaryPushButton, ToolButton
-
+from qfluentwidgets import setTheme, Theme
 import sys
+
+from qfluentwidgets import FlowLayout, PrimaryPushButton
+from qfluentwidgets import setTheme, Theme
+
 sys.path.append('src')
 # print(sys.path)
 
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy
-from PySide6.QtCore import Qt, QSize, Signal, QPoint, QTimer, QObject
-from PySide6.QtGui import QFont, QColor, QPainter, QPixmap, QPalette, QBrush
-from PySide6.QtWidgets import QGraphicsDropShadowEffect
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem
+from PySide6.QtCore import Qt, QTimer, QObject
+from PySide6.QtGui import QPixmap, QPalette, QBrush
 
 from typing import override
 class MyFrameBase(QFrame):
@@ -206,7 +206,7 @@ if(__name__ == "__main__"):
     app = QApplication(sys.argv)
     setTheme(Theme.DARK)
     w = VerticalFrame()
-    pixmap = QPixmap(r"D:\Program\Musify\src\resources\images\image_2.png")
+    pixmap = QPixmap(r"/resources\images\image_2.png")
     w.setBackgroundImage(pixmap)
     
     for x in range(10):

@@ -1,6 +1,21 @@
-from qfluentwidgets import FluentIconBase, Theme, Enum, getIconColor, setTheme
-from qfluentwidgets import ToggleToolButton
+import os
+import sys
+
 from PySide6.QtWidgets import QApplication
+from loguru import logger
+from qfluentwidgets import FluentIconBase, Theme, Enum, getIconColor
+
+
+def resource_path(relative_path):
+    """Return absolute path to resource. Compatible with dev and bundled modes."""
+    if hasattr(sys, "_MEIPASS"):  # PyInstaller
+        base_path = sys._MEIPASS
+    elif getattr(sys, 'frozen', False):  # Nuitka
+        base_path = os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.abspath(".")
+    logger.critical(f"Base path: {base_path}/{relative_path}")
+    return os.path.join(base_path, relative_path)
 
 class ThemedIcon(FluentIconBase, Enum):
     PLAYLIST =  "playlist" 
@@ -28,12 +43,16 @@ class ThemedIcon(FluentIconBase, Enum):
 
     def path(self, theme=Theme.AUTO):
         # getIconColor() return "white" or "black" according to current theme
-        return f'src/resources/icons/{getIconColor(theme)}/{self.value}-svgrepo-com.svg'
+        # def path(self, theme=Theme.AUTO):
+        icon_color = getIconColor(theme)
+        relative_path = f'resources/icons/{icon_color}/{self.value}-svgrepo-com.svg'
+        return resource_path(relative_path)
     
 if(__name__ == "__main__"):
     app = QApplication([])
-    setTheme(Theme.DARK)
-    button = ToggleToolButton(ThemedIcon.PLAYLIST_MUSIC.path())
-    button.show()
+    print(resource_path())
+    # setTheme(Theme.DARK)
+    # button = ToggleToolButton(ThemedIcon.PLAYLIST_MUSIC.path())
+    # button.show()
     app.exec()
 

@@ -76,7 +76,7 @@ class PlaceHolder(Enum):
     """
 
     # Folder names inside the IMAGE_FOLDER
-    PLACEHOLDER = r'src\resources\images\placeholder'
+    PLACEHOLDER = r'resources\images\placeholder'
     ARTIST = "artist.jpg"
     ALBUM = "album.png"
     PLAYLIST = "playlist.png"
@@ -102,7 +102,7 @@ class MusifyDefault(Enum):
     DEFAULT_DATABASE_URI = 'sqlite:///musify.db'
     DEFAULT_DATABASE_TRACK_MODIFICATIONS = False
     
-    DEFAULT_MEDIA_CARD_THUMBNAIL_PATH = Path(r'src\resources\images\image_2.png')
+    DEFAULT_MEDIA_CARD_THUMBNAIL_PATH = Path(r'resources\images\image_2.png')
     
     @property
     def absolute_path(self):

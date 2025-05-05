@@ -1,47 +1,24 @@
-
-from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolButton, TransparentPushButton
-from qfluentwidgets import FluentIcon, setCustomStyleSheet, PrimaryPushButton
-from qfluentwidgets import RoundMenu, Action
-
-
-import sys
-
-
-from pathlib import Path
-
-from loguru import logger
-
-from src.common.myScroll import SideScrollWidget, HorizontalScrollWidget, VerticalScrollWidget
-from src.common.myFrame import VerticalFrame, HorizontalFrame, FlowFrame
-from src.components.cards.infoCard import DisplayStats
-from src.components.cards.wideCard import BackgroundCard, WideCard
-from src.components.cards.infoCard import DisplayStats
-from src.components.cards.portraitCard import PortraitAlbumCard
-from src.components.cards.artistCard import ArtistCard
-from src.components.cards.audioCard import AudioCard
-
-from src.utility import ThemedIcon
-from src.utility.downloader.thumbnail_downloader import ThumbnailDownloader
-from src.utility.database_utility import DatabaseManager
-from src.utility.misc import get_thumbnail_url
-from src.animation import WideCardSkeleton, LandscapeAudioSkeleton
-from src.utility.enums import ImageFolder
-from src.utility.image_utility import blur_pixmap
-from src.utility.iconManager import ThemedIcon
-from src.api.data_fetcher import YTMusicMethod, DataFetcherWorker
-
-from PySide6.QtWidgets import QFrame, QStackedWidget
-from PySide6.QtCore import Qt, QSize, Signal, QPoint, QTimer
-from PySide6.QtGui import QPixmap
-
-from qasync import QEventLoop, asyncSlot, asyncClose
-import asyncio
-
-import json
-
-from typing import NamedTuple
+from qfluentwidgets import FluentIcon
 from queue import Queue
 
+from PySide6.QtCore import Qt, Signal, QTimer
+from PySide6.QtGui import QPixmap
+from PySide6.QtWidgets import QFrame
+from loguru import logger
+from qfluentwidgets import FluentIcon
+from qfluentwidgets import RoundMenu, Action
+
+from src.animation import WideCardSkeleton, LandscapeAudioSkeleton
+from src.common.myFrame import VerticalFrame, HorizontalFrame
+from src.common.myScroll import VerticalScrollWidget
+from src.components.cards.artistCard import ArtistCard
+from src.components.cards.audioCard import AudioCard
+from src.components.cards.portraitCard import PortraitAlbumCard
+from src.components.cards.wideCard import WideCard
+from src.utility.downloader.thumbnail_downloader import ThumbnailDownloader
+from src.utility.enums import ImageFolder
+from src.utility.image_utility import blur_pixmap
+from src.utility.misc import get_thumbnail_url
 
 
 class ViewBase(VerticalScrollWidget):
@@ -82,7 +59,7 @@ class ViewBase(VerticalScrollWidget):
         self.container.setFixedHeight(500)
         self.container.setContentsMargins(0, 0, 0, 0)
         self.container.move(-10, 0)
-        self.background_pixmap = QPixmap(r"D:/Program/Musify/src/resources/images/image_2.png")
+        self.background_pixmap = QPixmap(r"/resources/images/image_2.png")
         blur_background = blur_pixmap(self.background_pixmap, 30)
         self.container.setBackgroundImage(blur_background)
         self.viewCard = WideCard(self.scrollArea.viewport())
