@@ -84,7 +84,7 @@ pip install PySide6 qfluentwidgets ytmusicapi loguru mutagen python-vlc ytdlp qs
 1. Clone the repository:
 ```bash
 git clone https://github.com/dontknow492/BeatRoot.git
-cd musify
+cd BeatRoot
 ```
 
 2. Install requirements:
