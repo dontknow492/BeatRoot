@@ -11,6 +11,22 @@
 import os
 import sys
 
+
+def delete_plugins_cache():
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    plugins_dir = os.path.join(current_dir, "plugins")
+    cache_file = os.path.join(plugins_dir, "plugins.dat")
+
+    if os.path.exists(cache_file):
+        try:
+            os.remove(cache_file)
+            print("[INFO] plugins.dat cache deleted.")
+        except Exception as e:
+            print(f"[ERROR] Failed to delete plugins.dat: {e}")
+    else:
+        print("[INFO] plugins.dat not found — nothing to delete.")
+
+
 # Get the absolute path to the directory containing this script
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -21,7 +37,6 @@ os.environ['VLC_LIB'] = os.path.join(current_dir, "libvlc.dll")
 # Example: Load an icon
 # icon_path = get_resource_path("data/user/schema.sql")
 # print(icon_path)
-
 
 import asyncio
 import os
@@ -426,6 +441,8 @@ class MainWindow(FluentWindow):
         self.queue.load_from_database()
 
     def set_player_track(self, track_data):
+        if not track_data:
+            return
         title = track_data.get("title")
         artist = track_data.get("artists")
         str_artist = "Unknown"
@@ -763,6 +780,8 @@ class SignalHandler(QObject):
 
     def _queue_signals(self):
         self.ui.queue.audioCardClicked.connect(lambda song_data: self.ui.bottomPlayer.set_song(song_data))
+        self.ui.queue.albumClicked.connect(self.ui._add_audio_view)
+        self.ui.queue.artistClicked.connect(self.ui.add_playlist_view)
 
     def _dynamic_view_signal(self, view):
         view.audioCardClicked.connect(self.ui.on_audioPlayClicked)
@@ -790,7 +809,7 @@ class SignalHandler(QObject):
     def _setting_signals(self):
         setting = self.ui.settingsInterface
         setting.aboutSignal.connect(self.ui.on_about_clicked)
-        pass
+        # todo: implement logic
 
 def main():
     # setTheme(Theme.LIGHT)

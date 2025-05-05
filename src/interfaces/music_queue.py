@@ -35,6 +35,8 @@ from qasync import QEventLoop, asyncSlot, asyncClose
 class MusicQueue(SimpleCardWidget):
     audioCardClicked = Signal(dict)
     selectionChanged = Signal(dict)
+    artistClicked = Signal(str)
+    albumClicked = Signal(str)
     def __init__(self, database_manager: DatabaseManager, parent=None):
         super().__init__(parent = parent)
         self.setObjectName("MusicQueue")
@@ -142,6 +144,8 @@ class MusicQueue(SimpleCardWidget):
                     logger.info("Selected song found: ", selected_idx)
                     focus_card = card
                 self.scroll_area.insertWidget(index, card)
+                card.albumClicked.connect(self.albumClicked.emit)
+                card.artistClicked.connect(self.artistClicked.emit)
             else:
                 logger.debug(f"Song id is none: {track}-index{index}")
                 

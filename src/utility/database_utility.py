@@ -60,6 +60,8 @@ class DatabaseManager(QObject):
         try:
             async with self.db.execute("SELECT id, title, album_id, genre_id, duration FROM songs WHERE id = ?", (song_id,)) as cursor:
                 data =  await cursor.fetchone()
+                if not data:
+                    return None
                 song_data = {
                     'videoId': data[0],
                     'title': data[1],
