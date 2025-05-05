@@ -1,5 +1,5 @@
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 
 from PySide6.QtWidgets import QStackedWidget, QApplication

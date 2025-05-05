@@ -12,4 +12,5 @@ aiosqlite
 aiofiles
 pillow
 pyyaml
+setuptools
 

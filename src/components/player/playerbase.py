@@ -5,7 +5,7 @@ from qfluentwidgets import Slider, TransparentToolButton, PrimaryToolButton, Tra
 from qfluentwidgets import PillToolButton, SimpleCardWidget, themeColor, ThemeColor
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 # print(sys.path)
 from src.utility.iconManager import ThemedIcon
 from src.utility.enums import PlaceHolder

@@ -3,7 +3,7 @@ from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolBut
 import aiofiles
 import asyncio
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from pathlib import Path
 
 from src.common.myScroll import SideScrollWidget, HorizontalScrollWidget, VerticalScrollWidget

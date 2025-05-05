@@ -1,6 +1,6 @@
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 from src.common.myScroll import VerticalScrollWidget
 from src.animation.audio_skeleton_animation import LandscapeAudioSkeleton

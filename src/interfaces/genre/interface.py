@@ -1,7 +1,7 @@
 from qfluentwidgets import FlowLayout, TitleLabel, PrimaryPushButton
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 from src.api.data_fetcher import DataFetcherWorker, YTMusicMethod
 from src.utility.check_net_connectivity import is_connected_to_internet

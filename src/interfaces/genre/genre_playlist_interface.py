@@ -1,5 +1,5 @@
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 from src.components.cards.portraitCard import PlaylistCard
 from src.common.myScroll import FlowScrollWidget

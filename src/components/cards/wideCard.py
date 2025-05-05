@@ -6,7 +6,7 @@ from qfluentwidgets import FluentIcon
 from pathlib import Path
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 # print(sys.path)
 from src.utility.iconManager import ThemedIcon

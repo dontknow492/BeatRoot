@@ -1,7 +1,7 @@
 from qfluentwidgets import FlowLayout, TitleLabel, PrimaryPushButton
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from pathlib import Path
 
 import json

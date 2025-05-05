@@ -2,7 +2,7 @@ from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolBut
 from qfluentwidgets import FluentIcon, setCustomStyleSheet, setThemeColor, setTheme, Theme, ThemeColor
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 from src.common.myFrame import VerticalFrame, HorizontalFrame
 from src.utility.enums import PlaceHolder

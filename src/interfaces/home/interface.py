@@ -3,7 +3,7 @@
 import aiofiles
 import asyncio
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from pathlib import Path
 
 

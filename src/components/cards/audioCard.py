@@ -3,7 +3,7 @@ from qfluentwidgets import FluentIcon, setCustomStyleSheet, setThemeColor, setTh
 from qfluentwidgets import RoundMenu, Action
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from src.utility.enums import PlaceHolder
 from pathlib import Path
 

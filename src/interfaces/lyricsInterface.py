@@ -5,7 +5,7 @@ from qfluentwidgets import Theme, setTheme, setCustomStyleSheet
 
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 import random
 

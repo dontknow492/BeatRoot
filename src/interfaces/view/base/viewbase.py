@@ -5,7 +5,7 @@ from qfluentwidgets import RoundMenu, Action
 
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 from pathlib import Path
 

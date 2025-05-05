@@ -3,7 +3,7 @@ from qfluentwidgets import Theme, setTheme
 
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 from loguru import logger
 

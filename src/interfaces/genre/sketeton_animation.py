@@ -1,5 +1,5 @@
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 from src.common.myFrame import FlowFrame
 from src.animation.playlist_skeleton_animation import PlaylistSkeleton

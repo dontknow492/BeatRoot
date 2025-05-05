@@ -4,7 +4,7 @@ from qfluentwidgets import AvatarWidget, FluentIcon, InfoBadge, InfoBadgePositio
 
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from src.utility.enums import PlaceHolder
 from src.utility.enums import ImageFolder
 from pathlib import Path

@@ -6,7 +6,7 @@ import sys
 
 from src.interfaces import MusicQueue
 
-sys.path.append(r'D:\Program\Musify')
+
 print(sys.path)
 try:
     ctypes.CDLL(r"D:\Program\Musify\libvlc.dll")

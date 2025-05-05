@@ -3,7 +3,7 @@ from qfluentwidgets import FluentIcon, setCustomStyleSheet, setThemeColor, setTh
 from qfluentwidgets import ProgressRing, CardWidget, SimpleCardWidget
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from src.components.cards.audioCard import AudioCardBase
 from src.common.myFrame import HorizontalFrame, VerticalFrame
 from src.common.myButton import PrimaryRotatingButton

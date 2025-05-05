@@ -2,7 +2,7 @@ from qfluentwidgets import ComboBox, RoundMenu, TogglePushButton, FluentIcon, St
                 Dialog, Flyout, FlyoutView, FlyoutViewBase, SwitchButton, BodyLabel, Action
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 from src.common.myFrame import VerticalFrame, HorizontalFrame
 from src.common.mySlider import VerticalSlider

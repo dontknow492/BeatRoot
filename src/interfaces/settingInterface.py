@@ -6,9 +6,9 @@ from qfluentwidgets import FolderListSettingCard, SwitchSettingCard, OptionsSett
     ComboBoxSettingCard, SettingCardGroup, PrimaryPushSettingCard
 from qfluentwidgets import qconfig, FluentIcon
 
-sys.path.append(r'D:\Program\Musify')
 
-from config.config import MyConfig
+
+from config.config import cfg
 
 from src.common.myScroll import VerticalScrollWidget
 
@@ -18,8 +18,7 @@ class SettingInterface(VerticalScrollWidget):
     def __init__(self, parent=None):
         super().__init__(title= "Settings", parent=parent)
         self.setObjectName("SettingInterface")
-        self.cfg = MyConfig()
-        qconfig.load("config/config.json", self.cfg)
+        qconfig.load("config/config.json", cfg)
         self.init_ui()
 
         
@@ -29,7 +28,7 @@ class SettingInterface(VerticalScrollWidget):
         download_group = SettingCardGroup("Download", self)
         about_group = SettingCardGroup("About", self)
         theme_card = OptionsSettingCard(
-            self.cfg.theme,
+            cfg.theme,
             FluentIcon.BRUSH,
             "Application Theme",
             "Adjust the appearance of your application",
@@ -38,7 +37,7 @@ class SettingInterface(VerticalScrollWidget):
         )
         
         startup_page_card = OptionsSettingCard(
-            configItem=self.cfg.startupPage,
+            configItem=cfg.startupPage,
             icon = FluentIcon.HOME,
             title= "Startup Page",
             content="Choose the page that opens when the application starts",
@@ -54,21 +53,21 @@ class SettingInterface(VerticalScrollWidget):
             FluentIcon.MUSIC,
             "Enable Equalizer",
             "Enable the equalizer feature",
-            self.cfg.enable_equilizer,
+            cfg.enable_equilizer,
             parent=playback_group
         )
         endless_play_card = SwitchSettingCard(
             FluentIcon.SYNC,
             "Endless Play",
             "Enable endless play",
-            self.cfg.endless_play,
+            cfg.endless_play,
             parent=playback_group
         )
         normalize_audio_card = SwitchSettingCard(
             FluentIcon.BOOK_SHELF,
             "Normalize Audio",
             "Normalize the audio",
-            self.cfg.normalize_audio,
+            cfg.normalize_audio,
             parent=playback_group
         )
         
@@ -79,7 +78,7 @@ class SettingInterface(VerticalScrollWidget):
         ])
         
         download_folder_card = FolderListSettingCard(
-            configItem=self.cfg.downloadFolder,
+            configItem=cfg.downloadFolder,
             title="Download Folder",
             content="Select the default download folder",
             directory=QStandardPaths.writableLocation(QStandardPaths.MusicLocation),
@@ -87,7 +86,7 @@ class SettingInterface(VerticalScrollWidget):
         )
         
         download_codec = ComboBoxSettingCard(
-            configItem=self.cfg.download_codec,
+            configItem=cfg.download_codec,
             icon=FluentIcon.DOWNLOAD,
             title="Download Codec",
             content="Select the default download codec",
@@ -113,7 +112,7 @@ class SettingInterface(VerticalScrollWidget):
             FluentIcon.UPDATE,
             "Check Update",
             "Automatically check for updates",
-            self.cfg.check_update,
+            cfg.check_update,
             parent=about_group
         )
         about_button = PrimaryPushSettingCard(
@@ -134,7 +133,7 @@ class SettingInterface(VerticalScrollWidget):
             about_group
         ])
         about_button.clicked.connect(self.aboutSignal.emit)
-        self.cfg.save()
+        cfg.save()
 
 
 if __name__ == "__main__":

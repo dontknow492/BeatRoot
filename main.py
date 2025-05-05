@@ -8,7 +8,13 @@ def get_resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+import os
+import sys
 
+parent_dir = os.path.dirname(os.getcwd())
+
+os.environ['VLC_PLUGIN_PATH'] = os.path.join(parent_dir, "plugins")
+os.environ['VLC_LIB'] = os.path.join(parent_dir, "libvlc.dll")
 # Example: Load an icon
 # icon_path = get_resource_path("data/user/schema.sql")
 # print(icon_path)
@@ -682,7 +688,7 @@ class MainWindow(FluentWindow):
         self.thread().deleteLater()
         self.deleteLater()
         super().closeEvent(event)
-        # self.stop_threads()
+        self.stop_threads()
 
 
 class SignalHandler(QObject):
@@ -784,7 +790,7 @@ class SignalHandler(QObject):
 def main():
     setTheme(Theme.DARK)
     # Configure logging
-    logger.add("logs/app.log", rotation="1 week", level="DEBUG", encoding="utf-8", backtrace=True, diagnose=True)
+    # logger.add("logs/app.log", rotation="1 week", level="DEBUG", encoding="utf-8", backtrace=True, diagnose=True)
     logger.info("App started")
 
     # Create the Qt application
@@ -816,17 +822,22 @@ def main():
     # Run the Qt event loop
     with loop:
         try:
+            # exit_code = app.exec()
             # Wait for the app_close_event to be set
             loop.run_until_complete(app_close_event.wait())
+            exit_code = app.exec()
         except asyncio.CancelledError:
             logger.info("Application shutdown requested.")
 
-    logger.debug("loop ends")
-    # loop.close()
-    print("this is real end")
-    # Explicitly quit the QApplication
-    # app.quit()
+    logger.debug("Application exiting")
+    logger.remove()
+    sys.exit(exit_code)
+
 
 
 if __name__ == "__main__":
     main()
+
+
+# if __name__ == "__main__":
+#     main()

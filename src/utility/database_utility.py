@@ -2,7 +2,7 @@
 import aiosqlite
 import asyncio
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from data.user.database import initialize_database
 from loguru import logger  
 from typing import List, Dict, Optional, Union

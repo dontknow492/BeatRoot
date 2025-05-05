@@ -3,7 +3,7 @@ from qfluentwidgets import FluentIcon, setCustomStyleSheet, setThemeColor, setTh
 from qfluentwidgets import SmoothScrollArea, FlowLayout
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 # print(sys.path)
 
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy

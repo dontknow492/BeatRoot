@@ -4,7 +4,7 @@ from qfluentwidgets import SearchLineEdit, Pivot, ComboBox, Action
 
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from src.common.myScroll import MyScrollWidgetBase, FlowScrollWidget, VerticalScrollWidget
 from src.common.myFrame import VerticalFrame, HorizontalFrame
 from src.common.myButton import PrimaryRotatingButton

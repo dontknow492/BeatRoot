@@ -4,7 +4,7 @@ from qfluentwidgets import ElevatedCardWidget, PrimaryToolButton, setTheme, Them
 from qfluentwidgets import FluentIcon, setCustomStyleSheet
 from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel
 
-sys.path.append(r'D:\Program\Musify')
+
 
 import time
 

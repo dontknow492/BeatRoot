@@ -1,7 +1,7 @@
 
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from src.common.myFrame import VerticalFrame, HorizontalFrame, FlowFrame
 from src.common.myScroll import SideScrollWidget, VerticalScrollWidget
 from src.animation import RectSkeletonScreen, PlaylistSkeleton

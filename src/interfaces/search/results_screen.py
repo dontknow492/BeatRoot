@@ -4,7 +4,7 @@ from qfluentwidgets import SearchLineEdit, RoundMenu, Action, FluentIcon
 
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 from loguru import logger
 

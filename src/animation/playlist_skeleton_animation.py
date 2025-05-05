@@ -1,5 +1,5 @@
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from src.animation.skeleton_screen_animation import RectSkeletonScreen, HorizontalRectSkeletonScreen
 from src.common.myFrame import VerticalFrame
 # print(sys.path)

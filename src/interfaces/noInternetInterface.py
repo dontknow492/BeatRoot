@@ -1,7 +1,7 @@
 from qfluentwidgets import PrimaryPushButton, SubtitleLabel, ImageLabel, FluentIcon
 
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 from src.common.myFrame import VerticalFrame
 from src.utility.check_net_connectivity import is_connected_to_internet
 

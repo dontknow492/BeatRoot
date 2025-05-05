@@ -13,11 +13,4 @@ class MyConfig(QConfig):
     endless_play = ConfigItem("Playback", "EndlessPlay", True, validator= BoolValidator(), restart=True)
     normalize_audio = ConfigItem("Playback", "NormalizeAudio", True, validator= BoolValidator(), restart=True)
     
-if(__name__ == "__main__"):
-    config = MyConfig()
-    # config.themeMode = "Dark"
-    # config.startupPage = "Search"
-    # config.downloadFolder = "data\\downloads"
-    print(config.themeMode)
-    print(config.startupPage)
-    print(config.downloadFolder)
+cfg =  MyConfig()

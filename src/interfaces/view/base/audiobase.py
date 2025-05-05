@@ -1,5 +1,5 @@
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 
 from src.interfaces.view.base.playlistbase import PlaylistViewBase
 

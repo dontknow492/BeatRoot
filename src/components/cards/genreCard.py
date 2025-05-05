@@ -2,7 +2,7 @@ from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, setCustomStyleShee
 from qfluentwidgets import FlowLayout, SimpleCardWidget
 from qfluentwidgets import FluentIconBase, ThemeColor, Theme, isDarkTheme, setTheme
 import sys
-sys.path.append(r'D:\Program\Musify')
+
 # print(sys.path)
 from pathlib import Path
 import random
