@@ -2,7 +2,6 @@ import os
 import sys
 
 from PySide6.QtWidgets import QApplication
-from loguru import logger
 from qfluentwidgets import FluentIconBase, Theme, Enum, getIconColor
 
 
@@ -14,7 +13,6 @@ def resource_path(relative_path):
         base_path = os.path.dirname(sys.executable)
     else:
         base_path = os.path.abspath(".")
-    logger.critical(f"Base path: {base_path}/{relative_path}")
     return os.path.join(base_path, relative_path)
 
 class ThemedIcon(FluentIconBase, Enum):

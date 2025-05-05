@@ -1,6 +1,18 @@
+import os
+import sys
 from enum import Enum
-from typing import List, NamedTuple
 from pathlib import Path
+
+
+def resource_path(relative_path):
+    """Return absolute path to resource. Compatible with dev and bundled modes."""
+    if hasattr(sys, "_MEIPASS"):  # PyInstaller
+        base_path = sys._MEIPASS
+    elif getattr(sys, 'frozen', False):  # Nuitka
+        base_path = os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 class DataPath(Enum):
     DATA_DIR = "data"
@@ -11,11 +23,11 @@ class DataPath(Enum):
     
     @property
     def getAbsPath(self):
-        return f"{self.DATA_DIR.value}/{self.APP_DATA_DIR.value}/{self.value}"
+        return resource_path(f"{self.DATA_DIR.value}/{self.APP_DATA_DIR.value}/{self.value}")
     
     @property
     def getFullPath(self):
-        return Path(__file__).parent.parent / self.getAbsPath
+        return resource_path(Path(__file__).parent.parent / self.getAbsPath)
     
 
 class SortType(Enum):
@@ -71,22 +83,18 @@ class ImageFolder(Enum):
         return f"{self.IMAGE_DIR.value}\\{self.value}"
     
 class PlaceHolder(Enum):
-    """
-    An enumeration representing the path for the image of categories.
-    """
-
-    # Folder names inside the IMAGE_FOLDER
-    PLACEHOLDER = r'resources\images\placeholder'
+    """Enum representing placeholder image paths."""
     ARTIST = "artist.jpg"
     ALBUM = "album.png"
     PLAYLIST = "playlist.png"
     SONG = "song.png"
     LYRICS = "lyrics.jpg"
 
+    BASE_FOLDER = "resources/images/placeholder"
+
     @property
     def path(self):
-        # Join the base IMAGE_FOLDER path with the enum value (folder name)
-        return f"{self.PLACEHOLDER.value}\\{self.value}"
+        return resource_path(f"{self.BASE_FOLDER.value}/{self.value}")
 
 
 #

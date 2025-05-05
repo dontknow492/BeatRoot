@@ -1,29 +1,26 @@
 
-import aiosqlite
 import asyncio
-import sys
+from pathlib import Path
+from typing import Dict
+
+import aiosqlite
+from PySide6.QtCore import QObject, Signal
+from loguru import logger
 
 from data.user.database import initialize_database
-from loguru import logger  
-from typing import List, Dict, Optional, Union
-
-from PySide6.QtCore import QObject, Signal, Slot , QTimer
-import PySide6.QtAsyncio as QtAsyncio
-from PySide6.QtWidgets import QApplication, QMainWindow
-
 from src.utility.duration_parse import seconds_to_duration
-
-from pathlib import Path
-import datetime
 
 
 class DatabaseManager(QObject):
     error = Signal(str)
     fetched = Signal(list)
     closed = Signal()
-    def __init__(self, db_path, parent=None):
+    def __init__(self, db_path, sql_path, parent=None):
         super().__init__(parent=parent)
         self.db_path = db_path
+        with open(sql_path, 'r') as f:
+            self.schema_sql = f.read()
+            logger.info("Schema sql loaded succesfully:")
         self.db = None  # Initialize to None, will connect asynchronously
         logger.debug(f"Database initialized at {self.db_path}")
         
@@ -32,7 +29,7 @@ class DatabaseManager(QObject):
         """Create necessary tables."""
         try:
             logger.debug("Creating tables...")
-            await initialize_database(self.db_path)  # Make sure the correct db_path is passed
+            await initialize_database(self.db_path, self.schema_sql)  # Make sure the correct db_path is passed
             self.db = await aiosqlite.connect(self.db_path)  # Re-establish connection after initialization
             # await self.db.execute("PRAGMA foreign_keys = ON;")
             logger.success("Tables created successfully.")

@@ -15,7 +15,7 @@
     },
     "Interface": {
         "StartupPage": "Home",
-        "ThemeMode": "Light"
+        "ThemeMode": "Dark"
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",

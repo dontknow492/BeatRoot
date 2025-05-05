@@ -1,9 +1,20 @@
 from qfluentwidgets import QConfig, OptionsConfigItem, ConfigItem, OptionsValidator, BoolValidator
-from qfluentwidgets import qconfig
+from qfluentwidgets import qconfig, setTheme, Theme
+
+def on_theme_changed(value):
+    if value == "Auto":
+        setTheme(Theme.AUTO)
+    elif value == "Light":
+        setTheme(Theme.LIGHT)
+    elif value == "Dark":
+        setTheme(Theme.DARK)
+
+
 class MyConfig(QConfig):
     startupPage = OptionsConfigItem("Interface", "StartupPage", "Home", OptionsValidator(["Home", "Search", "Local"]), restart=True)
-    theme = OptionsConfigItem("Interface", "ThemeMode", "Auto", OptionsValidator(["Auto", "Light", "Dark"]), restart=True)
-    
+    theme = OptionsConfigItem("Interface", "ThemeMode", "Light", OptionsValidator(["Light", "Dark", "Auto"]), restart=True)
+    theme.valueChanged.connect(on_theme_changed)
+
     downloadFolder = ConfigItem("Download", "DownloadFolder", [], restart=True)
     download_codec = OptionsConfigItem("Download", "DownloadCodec", "M4A('recommended')", OptionsValidator(["M4A('recommended')", "MP3", "WAV", "OPUS"]),restart=True)
     

@@ -84,7 +84,7 @@ class DownloadInterface(LibraryInterfaceBase):
             return
         
         download_url = get_audio_url(video_id)
-        request_id = self.song_downloader.add_request(download_url, r"D:\Program\Musify\data\downloads")
+        request_id = self.song_downloader.add_request(download_url, r"downloads")
         if request_id is None:
             logger.error("Request id is None")
             return

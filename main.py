@@ -44,19 +44,18 @@ except Exception as e:
     exit(0)
 
 
-
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
+def resource_path(relative_path: str) -> str:
+    """ Get absolute path to resource, works for dev and for PyInstaller/Nuitka executable """
     if hasattr(sys, '_MEIPASS'):
-        # PyInstaller bundle
+        # PyInstaller extracts all files to a temporary folder and sets this variable
         base_path = sys._MEIPASS
     elif getattr(sys, 'frozen', False):
-        # Nuitka bundle (or similar)
+        # Nuitka sets sys.frozen
         base_path = os.path.dirname(sys.executable)
     else:
-        # Development mode
-        # __file__ is inside src, so go up to project root
-        base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        # Development mode (running from source)
+        base_path = os.path.abspath(".")
+
     return os.path.join(base_path, relative_path)
 
 import asyncio
@@ -282,14 +281,15 @@ class MainWindow(FluentWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("BeatRoot")
-        self.setWindowIcon(QIcon("app.ico"))
+        icon = resource_path("app.ico")
+        self.setWindowIcon(QIcon(icon))
 
         self.data_fetcher = DataFetcherWorker()
         self.data_fetcher.error_occurred.connect(self.on_error_occurred)
         # starting 
         self.data_fetcher.start()
-
-        self.database_manager = DatabaseManager(r"data/user/database.db", self)
+        self.schema_path = resource_path("data/user/schema.sql")
+        self.database_manager = DatabaseManager(resource_path("data/user/database.db"), self.schema_path, self)
 
         self.info_msg_handler = InfoTime(self, pos=InfoBarPosition.BOTTOM, duration=2000)
         self.view_manager = ViewManager(self.stackedWidget, self.data_fetcher, self.database_manager, self)
@@ -835,7 +835,7 @@ class SignalHandler(QObject):
 def main():
     # setTheme(Theme.LIGHT)
     # Configure logging
-    # logger.add("logs/app.log", rotation="1 week", level="DEBUG", encoding="utf-8", backtrace=True, diagnose=True)
+    logger.add("logs/app.log", rotation="1 week", level="DEBUG", encoding="utf-8", backtrace=True, diagnose=True)
     logger.info("App started")
 
     # Create the Qt application
@@ -844,12 +844,6 @@ def main():
     app.setWindowIcon(QIcon("app.ico"))
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)  # Set the event loop for asyncio
-
-    # Create the main window
-    # splash_screen = SplashScreen(FluentIcon.FULL_SCREEN)
-    # splash_screen.setWindowFlag(Qt.WindowType.FramelessWindowHint)
-    # splash_screen.setWindowState(Qt.WindowState.WindowMaximized)
-    # splash_screen.show()
 
     window = MainWindow()
     # window.setWindowState(Qt.WindowState.WindowFullScreen)
@@ -868,15 +862,16 @@ def main():
     with loop:
         try:
             # exit_code = app.exec()
-            # Wait for the app_close_event to be set
             loop.run_until_complete(app_close_event.wait())
-            exit_code = app.exec()
         except asyncio.CancelledError:
             logger.info("Application shutdown requested.")
-
-    logger.debug("Application exiting")
-    logger.remove()
-    sys.exit(exit_code)
+        finally:
+            loop.close()
+            loop.stop()
+            logger.info("Event loop closed.")
+            logger.info("Application shutting down...")
+            logger.remove()
+            os._exit(0)
 
 
 

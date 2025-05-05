@@ -1,31 +1,30 @@
 
 
-import aiofiles
 import asyncio
+import json
 import sys
-
 from pathlib import Path
 
+import PySide6.QtAsyncio as QtAsyncio
+import aiofiles
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QApplication, QStackedWidget
+from loguru import logger
 
-from src.utility.validator import validate_path
-from src.utility.enums import DataPath
-from src.utility.check_net_connectivity import is_connected_to_internet
 from src.api.data_fetcher import DataFetcherWorker, YTMusicMethod
 from src.interfaces.home.base import HomeScreen
 from src.interfaces.home.sketeton_animation import HomeAnimationSkeleton
+from src.utility.check_net_connectivity import is_connected_to_internet
+from src.utility.enums import DataPath
+from src.utility.validator import validate_path
 
-
-from PySide6.QtWidgets import QApplication, QStackedWidget
-from PySide6.QtCore import Qt, QSize, Signal
-import PySide6.QtAsyncio as QtAsyncio
+import os
+import time
 import json
 
 
-from enum import Enum
-import sys
 
-from queue import Queue
-from loguru import logger
+
 
 class HomeInterface(QStackedWidget):
     """
@@ -62,6 +61,8 @@ class HomeInterface(QStackedWidget):
     moreGenreClicked = Signal()
     noInternet = Signal()
     errorOccured = Signal(str)
+
+    MAX_AGE_SECONDS = 3 * 60 * 60  # 3 hours
 
     def __init__(self, data_fetcher: DataFetcherWorker, parent=None):
         """
@@ -163,6 +164,12 @@ class HomeInterface(QStackedWidget):
         home_path = DataPath.HOMEPAGE.getAbsPath
         if validate_path(home_path, 'file'):
             try:
+                file_age = time.time() - os.path.getmtime(home_path)
+                if file_age > self.MAX_AGE_SECONDS:
+                    logger.info(f"Home data file is older than 3 hours, deleting: {home_path}")
+                    os.remove(home_path)
+                    raise FileNotFoundError("Old home data file removed.")
+
                 logger.info(f"Loading home data from existing file: {home_path}")
                 with open(home_path, 'r') as file:
                     data = json.load(file)  # Assuming data is in JSON format
@@ -172,10 +179,10 @@ class HomeInterface(QStackedWidget):
                 logger.info("Home UI loaded from file.")
             except Exception as e:
                 logger.exception(f"Error loading data from file: {e}")
-                logger.exception("Falling back to fetching home data.")
+                logger.info("Falling back to fetching home data.")
                 self._fetch_home_data()
         else:
-            logger.info("Home data file not found. Fetching data...")
+            logger.info("Home data file not found. Fetching home data.")
             self._fetch_home_data()
 
     def _fetch_home_data(self):
