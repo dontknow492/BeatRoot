@@ -2,7 +2,6 @@ from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolBut
 from qfluentwidgets import FluentIcon, setCustomStyleSheet, PrimaryToolButton, SearchLineEdit, PillToolButton
 
 import sys
-sys.path.append('d:\\Program\\Musify')
 
 from src.common.myButton import PrimaryRotatingButton
 

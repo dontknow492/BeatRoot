@@ -18,7 +18,7 @@ import asyncio
 import os
 import sys
 from enum import Enum
-from typing import Union, Optional
+from typing import Union
 
 from PySide6.QtCore import QObject, QTimer, QUrl, Slot
 from PySide6.QtGui import QDesktopServices
@@ -351,23 +351,23 @@ class MainWindow(FluentWindow):
 
     def add_playlist_view(self, playlist_id):
         self.view_manager.add_view(
-            PlaylistView, playlist_id, "data/app/playlist.json", "playlist"
+            PlaylistView, playlist_id, "data/app/playlist.json"
         )
 
     def add_artist_view(self, artist_id):
         logger.debug(f"Artist id: {artist_id}")
         self.view_manager.add_view(
-            ArtistView, artist_id, "data/app/artist.json", "artist"
+            ArtistView, artist_id, "data/app/artist.json"
         )
 
     def add_album_view(self, album_id):
         self.view_manager.add_view(
-            AlbumView, album_id, "data/app/album.json", "album"
+            AlbumView, album_id, "data/app/album.json"
         )
 
     def _add_audio_view(self, audio_id):
         self.view_manager.add_view(
-            AudioView, audio_id, "data/app/watch_playlist.json", "audio"
+            AudioView, audio_id, "data/app/watch_playlist.json"
         )
 
     def _add_folder_view(self, folder_id, folder_path):

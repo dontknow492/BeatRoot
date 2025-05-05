@@ -7,7 +7,7 @@ import asyncio
 from loguru import logger
 
 import sys
-sys.path.append('d:\\Program\\Musify')
+
 from src.common.myScroll import FlowScrollWidget
 from src.components.cards.groupCard import GroupCard
 from src.interfaces.library.base import LibraryInterfaceBase

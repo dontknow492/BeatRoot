@@ -33,7 +33,7 @@ class ThemedIcon(FluentIconBase, Enum):
 if(__name__ == "__main__"):
     app = QApplication([])
     setTheme(Theme.DARK)
-    button = ToggleToolButton(ThemedIcon.PLAYLIST_MUSIC)
+    button = ToggleToolButton(ThemedIcon.PLAYLIST_MUSIC.path())
     button.show()
     app.exec()
 

@@ -87,6 +87,7 @@ Thumbs.db
 # Data & resource directories
 /data/downloads/
 /data/app/*.json
+/data/app/home.json
 
 # Ignore demo and sample files
 demo/

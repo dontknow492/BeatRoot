@@ -10,7 +10,6 @@ from typing import Tuple, Dict, Any, Optional
 from loguru import logger
 
 import sys
-sys.path.append('d:\\Program\\Musify')
 from src.utility.song_utils import get_stream_url
 
 class YTMusicMethod(Enum):

@@ -1,7 +1,6 @@
 from qfluentwidgets import ScrollArea, PrimaryPushButton, PrimaryToolButton, StrongBodyLabel, RoundMenu, Action
 
 import sys
-sys.path.append('d:\\Program\\Musify')
 from src.common.myScroll import VerticalScrollWidget
 from src.common.myFrame import HorizontalFrame
 from src.components.filters.filter import FilterView

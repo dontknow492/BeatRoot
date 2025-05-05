@@ -4,7 +4,7 @@ from qfluentwidgets import TransparentPushButton, PrimaryPushButton
 
 
 import sys
-sys.path.append('d:\\Program\\Musify')
+
 # sys.path.append('src')
 from src.common.myScroll import FlowScrollWidget
 from src.components.cards.portraitCard import PlaylistCard

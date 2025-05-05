@@ -4,7 +4,6 @@ from qfluentwidgets import SearchLineEdit, PrimaryPushButton
 
 
 import sys
-sys.path.append('d:\\Program\\Musify')
 from src.common import FlowScrollWidget
 from src.components.cards.portraitCard import PlaylistCard
 from src.components.cards.artistCard import ArtistCard

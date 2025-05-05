@@ -1,25 +1,16 @@
-from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolButton, TransparentDropDownToolButton
-from qfluentwidgets import FluentIcon, setCustomStyleSheet, CardWidget, ElevatedCardWidget, SimpleCardWidget
-from qfluentwidgets import SearchLineEdit, PrimaryPushButton
+from qfluentwidgets import FluentIcon
+from PySide6.QtWidgets import QApplication
+from loguru import logger
+from qfluentwidgets import FluentIcon
+from qfluentwidgets import PrimaryPushButton
 
-import sys
-sys.path.append('d:\\Program\\Musify')
-
-from src.common.myScroll import FlowScrollWidget, MyScrollWidgetBase, VerticalScrollWidget
-from src.components.cards.portraitCard import PlaylistCard
+from src.common.myScroll import VerticalScrollWidget
 from src.components.cards.downloadCard import DownloadCard, DownloadStatus
 from src.interfaces.library.base import LibraryInterfaceBase
-from src.utility.misc import is_online_song, get_audio_url, is_valid_youtube_url
 from src.utility.downloader.song_downloader import SongDownloader
 from src.utility.enums import ImageFolder
+from src.utility.misc import get_audio_url, is_valid_youtube_url
 
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy
-from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtGui import QFont, QColor
-from PySide6.QtWidgets import QGraphicsDropShadowEffect
-
-from loguru import logger
-from queue import Queue
 
 class DownloadInterface(LibraryInterfaceBase):
     def __init__(self, parent = None):

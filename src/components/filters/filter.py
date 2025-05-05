@@ -2,7 +2,6 @@ from qfluentwidgets import RoundMenu, Action
 from qfluentwidgets import FluentIcon, setCustomStyleSheet, setThemeColor, setTheme, Theme, ThemeColor
 
 import sys
-sys.path.append('d:\\Program\\Musify')
 # print(sys.path)
 from src.components.filters.filterCardBase import FilterBase
 from src.utility.enums import SortType

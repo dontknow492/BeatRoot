@@ -1,27 +1,15 @@
-from qfluentwidgets import ImageLabel, BodyLabel, TitleLabel, TransparentToolButton, TransparentDropDownToolButton
-from qfluentwidgets import FluentIcon, setCustomStyleSheet, CardWidget, ElevatedCardWidget, SimpleCardWidget
-from qfluentwidgets import SearchLineEdit, PrimaryPushButton
-
-
+import asyncio
 import sys
-sys.path.append('d:\\Program\\Musify')
 
-from src.common import FlowScrollWidget
+from PySide6.QtCore import Signal, QTimer
+from PySide6.QtWidgets import QApplication
+from loguru import logger
+from qasync import QEventLoop, asyncSlot, asyncClose
+
 from src.components.cards.portraitCard import PortraitAlbumCard
 from src.interfaces.library.base import LibraryInterfaceBase
 from src.utility.database_utility import DatabaseManager
 from src.utility.enums import ImageFolder
-from src.utility.misc import get_thumbnail_url
-
-from qasync import QEventLoop, asyncSlot, asyncClose
-import asyncio
-from loguru import logger
-from pathlib import Path
-
-from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy
-from PySide6.QtCore import Qt, QSize, Signal, QTimer
-from PySide6.QtGui import QFont, QColor
-from PySide6.QtWidgets import QGraphicsDropShadowEffect
 
 
 class AlbumInterface(LibraryInterfaceBase):
