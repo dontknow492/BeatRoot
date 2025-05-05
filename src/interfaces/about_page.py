@@ -13,16 +13,14 @@ from src.common.myScroll import VerticalScrollWidget
 from src.common.myFrame import VerticalFrame,  HorizontalFrame
 
 
-def load_yaml():
-    with open(r'D:\Program\Musify\app-info.yaml', 'r', encoding='utf-8') as file:
-        return yaml.safe_load(file)
 
 
 class AboutPage(VerticalScrollWidget):
-    def __init__(self, parent=None):
+    def __init__(self, yaml_path, parent=None):
         super().__init__(title="About", parent=parent)
         self.setObjectName("AboutPage")
-        self.app_info = load_yaml()
+        with open(yaml_path, 'r', encoding='utf-8') as file:
+            self.app_info = yaml.safe_load(file)
         logger.info(self.app_info)
         self.init_ui()
 

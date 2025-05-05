@@ -340,7 +340,8 @@ class MainWindow(FluentWindow):
         self.queue.hide()
 
         #about Page
-        self.about_page = AboutPage(self)
+        yaml_path = resource_path("app-info.yaml")
+        self.about_page = AboutPage(yaml_path, self)
 
         self.initNavigation()
         self.navigation_setup()
