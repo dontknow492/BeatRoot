@@ -1,3 +1,4 @@
+from PySide6.QtCore import Qt
 from qfluentwidgets import FluentIcon
 from PySide6.QtWidgets import QApplication
 from loguru import logger

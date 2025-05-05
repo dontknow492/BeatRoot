@@ -54,7 +54,13 @@ class InfoCardBase(QFrame):
         self.mainLayout.addWidget(self.statsDescription)
         
     def setMainStats(self, text):
-        self.mainStats.setText(text)
+        try:
+            text = str(text)
+            self.mainStats.setText(text)
+        except ValueError:
+            text = "0"
+            self.mainStats.setText(text)
+
         
     def getMainStats(self)->str:
         return self.mainStats.text()

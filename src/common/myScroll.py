@@ -5,7 +5,6 @@ from qfluentwidgets import SmoothScrollArea, FlowLayout
 import sys
 sys.path.append(r'D:\Program\Musify')
 # print(sys.path)
-from src.components.cards.portraitCard import PlaylistCard
 
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QApplication, QVBoxLayout, QSpacerItem, QSizePolicy
 from PySide6.QtCore import Qt, QSize, Signal, QPoint, QObject
