@@ -7,7 +7,6 @@ import sys
 from src.interfaces import MusicQueue
 
 
-print(sys.path)
 try:
     ctypes.CDLL(r"D:\Program\Musify\libvlc.dll")
     ctypes.CDLL(r"D:\Program\Musify\libvlccore.dll")
@@ -369,6 +368,8 @@ class PlayerInterface(PlayerScreen):
         """Set the audio slider value."""
         self.audioSlider.valueChanged.disconnect(self.slider_value_changed)
         self.audioSlider.setValue(value)
+        if "0:0" in self.total_time_label.text():
+            self._update_total_time()
         self.audioSlider.valueChanged.connect(self.slider_value_changed)
         
         # self.audioSlider.blockSignals(False)

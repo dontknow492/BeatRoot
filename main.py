@@ -1,12 +1,12 @@
-def get_resource_path(relative_path):
-    """Get the absolute path to a resource, works for dev and for PyInstaller."""
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(base_path, relative_path)
+# def get_resource_path(relative_path):
+#     """Get the absolute path to a resource, works for dev and for PyInstaller."""
+#     try:
+#         # PyInstaller creates a temp folder and stores path in _MEIPASS
+#         base_path = sys._MEIPASS
+#     except Exception:
+#         base_path = os.path.abspath(".")
+#
+#     return os.path.join(base_path, relative_path)
 
 import os
 import sys
@@ -312,6 +312,8 @@ class MainWindow(FluentWindow):
 
         self.homeInterface._fetch_genres()
         self.homeInterface.load_home()
+        self._load_last_queue()
+        self._load_last_played()
 
     def initNavigation(self):
         self.addSubInterface(self.homeInterface, FluentIcon.HOME, "Browse")
@@ -791,7 +793,7 @@ class SignalHandler(QObject):
         pass
 
 def main():
-    setTheme(Theme.DARK)
+    # setTheme(Theme.LIGHT)
     # Configure logging
     # logger.add("logs/app.log", rotation="1 week", level="DEBUG", encoding="utf-8", backtrace=True, diagnose=True)
     logger.info("App started")

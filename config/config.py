@@ -1,5 +1,5 @@
 from qfluentwidgets import QConfig, OptionsConfigItem, ConfigItem, OptionsValidator, BoolValidator
-
+from qfluentwidgets import qconfig
 class MyConfig(QConfig):
     startupPage = OptionsConfigItem("Interface", "StartupPage", "Home", OptionsValidator(["Home", "Search", "Local"]), restart=True)
     theme = OptionsConfigItem("Interface", "ThemeMode", "Auto", OptionsValidator(["Auto", "Light", "Dark"]), restart=True)
@@ -14,3 +14,4 @@ class MyConfig(QConfig):
     normalize_audio = ConfigItem("Playback", "NormalizeAudio", True, validator= BoolValidator(), restart=True)
     
 cfg =  MyConfig()
+qconfig.load('config/config.json', cfg)
