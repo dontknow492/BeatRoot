@@ -137,7 +137,7 @@ class HomeInterface(QStackedWidget):
             self.noInternet.emit()
         else:
             logger.info("loading form api")
-            self.genre_request_id = self.data_fetcher.add_request(YTMusicMethod.GET_MOOD_PLAYLISTS)
+            self.genre_request_id = self.data_fetcher.add_request(YTMusicMethod.GET_GENRE)
         
     def _on_genre_fetched(self, data):
         count = 1

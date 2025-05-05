@@ -10,6 +10,9 @@
 
 import os
 import sys
+import gettext
+# Override translation function to avoid looking for .mo files
+gettext.translation = lambda *args, **kwargs: gettext.NullTranslations()
 
 
 def delete_plugins_cache():
@@ -810,6 +813,7 @@ class SignalHandler(QObject):
         setting = self.ui.settingsInterface
         setting.aboutSignal.connect(self.ui.on_about_clicked)
         # todo: implement logic
+
 
 def main():
     # setTheme(Theme.LIGHT)

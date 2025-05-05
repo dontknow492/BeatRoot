@@ -3,6 +3,8 @@ import queue
 import time
 from enum import Enum
 from queue import PriorityQueue
+
+import ytmusicapi
 from PySide6.QtCore import QThread, Signal, QMutex, QMutexLocker
 import cachetools
 from ytmusicapi import YTMusic
@@ -11,6 +13,7 @@ from loguru import logger
 
 import sys
 from src.utility.song_utils import get_stream_url
+
 
 class YTMusicMethod(Enum):
     GET_HOME = "get_home"
