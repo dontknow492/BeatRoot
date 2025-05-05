@@ -8,8 +8,8 @@ from src.interfaces import MusicQueue
 
 
 try:
-    ctypes.CDLL(r"D:\Program\Musify\libvlc.dll")
-    ctypes.CDLL(r"D:\Program\Musify\libvlccore.dll")
+    ctypes.CDLL(r"libvlc.dll")
+    ctypes.CDLL(r"libvlccore.dll")
 except Exception as e:
     print(e)
 # print(sys.path)
